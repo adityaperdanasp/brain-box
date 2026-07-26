@@ -185,6 +185,10 @@
       topicId,
       originalType: "fill",
       prompt,
+      // mathville's newer static questions (factor trees, associative
+      // property, divisibility tables) carry the same optional q.image
+      // SVG that azkauniverse's mc questions do — see normalizeMc.
+      image: raw.image || null,
       options: buildOptions(answer, siblingAnswers),
       answer
     };
