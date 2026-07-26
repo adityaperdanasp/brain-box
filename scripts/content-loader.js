@@ -207,6 +207,7 @@
       topicId,
       originalType: "generator",
       prompt: raw.prompt,
+      image: raw.image || null,
       options: shuffle([raw.answer].concat(distractors.slice(0, 3))),
       answer: raw.answer
     };
@@ -226,6 +227,7 @@
         topicId,
         originalType: "match",
         prompt: (raw.prompt ? raw.prompt + " — " : "") + `What matches "${pair.left}"?`,
+        image: raw.image || null,
         options: buildOptions(pair.right, rights),
         answer: pair.right
       };
@@ -244,6 +246,7 @@
         topicId,
         originalType: "flashcard",
         prompt: f.front ? front : `What does "${front}" mean?`,
+        image: f.image || null,
         options: buildOptions(back, backs),
         answer: back
       };
@@ -269,6 +272,7 @@
       topicId,
       originalType: "sentence-builder",
       prompt: "Put the words in order: " + shuffle(raw.words).join(" / "),
+      image: raw.image || null,
       options: shuffle([correct].concat(wrongOrders)),
       answer: correct
     };
