@@ -22,7 +22,10 @@
       const { question, topic } = picked;
 
       container.innerHTML = `
-        <div class="bb-practice-progress sc-field-label">Question ${index + 1} / ${SESSION_LENGTH}</div>
+        <div class="bb-practice-header">
+          <button class="sc-chip bb-practice-home" id="bb-practice-home" title="Exit to menu">🏠</button>
+          <div class="bb-practice-progress sc-field-label">Question ${index + 1} / ${SESSION_LENGTH}</div>
+        </div>
         <div class="sc-panel bb-practice-card">
           <div class="sc-field-label">${topic.emoji} ${topic.label}</div>
           <div class="bb-practice-prompt">${question.prompt}</div>
@@ -31,6 +34,8 @@
           <button class="sc-btn hidden" id="bb-practice-next">Next ➡️</button>
         </div>
       `;
+
+      container.querySelector("#bb-practice-home").onclick = () => onExit && onExit();
 
       const optionsEl = container.querySelector(".bb-practice-options");
       const hintEl = container.querySelector("#bb-practice-hint");
