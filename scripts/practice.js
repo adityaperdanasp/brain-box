@@ -12,13 +12,15 @@
     const { boxTopicIds, topicsById, db, childId, childName, statsCache, onExit } = opts;
     let index = 0;
     let correctCount = 0;
+    let shownIds = new Set(); // reset each new session so "Play Again" doesn't reuse the last round's questions
 
     function renderQuestion() {
-      const picked = window.BRAINBOX_MASTERY.pickNextQuestion(boxTopicIds, topicsById, statsCache);
+      const picked = window.BRAINBOX_MASTERY.pickNextQuestion(boxTopicIds, topicsById, statsCache, shownIds);
       if (!picked) {
         container.innerHTML = `<div class="sc-panel">Box kosong — tambahkan topik dulu.</div>`;
         return;
       }
+      shownIds.add(picked.question.id);
       const { question, topic } = picked;
 
       container.innerHTML = `
@@ -82,7 +84,14 @@
         if (!res.ok) return; // fail silently — hint card just doesn't show
         const data = await res.json();
         if (!data.hint) return;
-        hintEl.textContent = "💡 " + data.hint;
+        hintEl.innerHTML = "";
+        const label = document.createElement("div");
+        label.className = "bb-practice-hint-label";
+        label.textContent = "🤖 AI Tutor";
+        const body = document.createElement("div");
+        body.textContent = data.hint;
+        hintEl.appendChild(label);
+        hintEl.appendChild(body);
         hintEl.classList.remove("hidden");
       } catch (e) {
         // network error — no hint, game still moves on
@@ -98,7 +107,7 @@
           <button class="sc-btn sc-btn-secondary" id="bb-practice-exit">Exit</button>
         </div>
       `;
-      container.querySelector("#bb-practice-again").onclick = () => { index = 0; correctCount = 0; renderQuestion(); };
+      container.querySelector("#bb-practice-again").onclick = () => { index = 0; correctCount = 0; shownIds = new Set(); renderQuestion(); };
       container.querySelector("#bb-practice-exit").onclick = () => onExit && onExit();
     }
 

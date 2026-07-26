@@ -280,4 +280,8 @@ h1, h2, h3, .sc-display {
 .bb-practice-hint {
   background: #f6e3b4; border-radius: 14px; padding: 0.7rem; font-size: 0.9rem; text-align: left;
 }
+.bb-practice-hint-label {
+  font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 0.72rem;
+  letter-spacing: 0.5px; text-transform: uppercase; color: #8a6d3a; margin-bottom: 0.3rem;
+}
 .bb-practice-hint.hidden, .bb-practice-progress.hidden { display: none; }

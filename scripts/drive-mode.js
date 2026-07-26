@@ -78,6 +78,7 @@
 
     let joyVec = { x: 0, y: 0 };
     let session = { score: 0, bites: 0 };
+    let shownIds = new Set(); // reset each new run so "Play Again" doesn't reuse the same questions
     let state = {
       x: DRIVE_CAR_START.x, y: DRIVE_CAR_START.y,
       dino: { x: DRIVE_DINO_START.x, y: DRIVE_DINO_START.y },
@@ -207,8 +208,9 @@
 
     function showQuestion() {
       state.paused = true;
-      const picked = window.BRAINBOX_MASTERY.pickNextQuestion(boxTopicIds, topicsById, statsCache);
+      const picked = window.BRAINBOX_MASTERY.pickNextQuestion(boxTopicIds, topicsById, statsCache, shownIds);
       if (!picked) { state.paused = false; return; }
+      shownIds.add(picked.question.id);
       const { question, topic } = picked;
       questionEl.classList.remove("hidden");
       questionEl.innerHTML = `
@@ -313,6 +315,7 @@
 
     function reset() {
       session = { score: 0, bites: 0 };
+      shownIds = new Set();
       state = {
         x: DRIVE_CAR_START.x, y: DRIVE_CAR_START.y,
         dino: { x: DRIVE_DINO_START.x, y: DRIVE_DINO_START.y },

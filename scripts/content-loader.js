@@ -103,6 +103,24 @@
     return out.length ? out : null;
   }
 
+  /* Place-value distractors: the generic "answer ± a nearby number" scheme
+     from numericDistractors falls apart here, because a place-value
+     answer can be anywhere from "8" to "8,000,000" depending purely on
+     which digit position got picked — nearby integers (e.g. 4, 5, 17 for
+     an answer of "8") aren't even the right SHAPE of wrong answer. The
+     pedagogically real mistake for this topic is confusing which power
+     of ten a digit sits in, so distractors are the same digit at other
+     plausible positions instead (8 → 80, 800, 8,000, ...). */
+  function placeValueDistractors(answer, count) {
+    const num = parseInt(String(answer).replace(/,/g, ""), 10);
+    if (!num || num < 1) return null;
+    let power = 0, digit = num;
+    while (digit % 10 === 0) { digit /= 10; power++; }
+    if (digit < 1 || digit > 9) return null; // not a clean single-digit place value — bail to generic distractors
+    const otherPowers = shuffle([0, 1, 2, 3, 4, 5, 6].filter((p) => p !== power)).slice(0, count);
+    return otherPowers.map((p) => (digit * Math.pow(10, p)).toLocaleString("en-US"));
+  }
+
   /* Text distractors: pull other answers from the same topic's pool. */
   function textDistractors(answer, siblingAnswers, count) {
     const normalizedAnswer = String(answer).trim().toLowerCase();
@@ -168,7 +186,12 @@
 
   function normalizeGenerated(raw, topicId) {
     // Generator output has no sibling pool (infinite, on-demand) — numeric only.
-    const distractors = numericDistractors(raw.answer, 3) || [];
+    // place-value needs its own distractor shape (see placeValueDistractors);
+    // everything else (addition, multiplication, rounding, measurement, ...)
+    // uses the generic "nearby number" scheme.
+    const distractors = topicId === "mathville:place-value"
+      ? placeValueDistractors(raw.answer, 3) || numericDistractors(raw.answer, 3) || []
+      : numericDistractors(raw.answer, 3) || [];
     return {
       id: nextId(topicId),
       topicId,
@@ -255,6 +278,22 @@
     return out;
   }
 
+  // mathville's genPlaceValue() picks a random digit-position out of
+  // whatever's actually in the generated number, with no guard against
+  // that digit appearing more than once (e.g. "the value of the digit 8
+  // in 785,628" — there are two 8s, so the question itself doesn't say
+  // which one). Free-text input hid this in the original game; as
+  // multiple-choice it reads as broken. Retry a few times for a number
+  // where the target digit is unambiguous — same shape as mathville's
+  // own Drive Mode retry loop for "clean" quick-answers.
+  function isAmbiguousPlaceValueQuestion(raw) {
+    const match = raw.prompt.match(/digit (\d) in ([\d,]+)/);
+    if (!match) return false;
+    const digit = match[1];
+    const numStr = match[2].replace(/,/g, "");
+    return numStr.split("").filter((c) => c === digit).length > 1;
+  }
+
   function buildMathvilleTopics(bank, generators) {
     return (bank.chapters || []).map((chapter) => {
       const topicId = "mathville:" + chapter.id;
@@ -268,7 +307,17 @@
           label: chapter.title,
           emoji: chapter.emoji,
           source: "generator",
-          next: () => normalizeGenerated(fns[Math.floor(Math.random() * fns.length)](), topicId)
+          next: () => {
+            if (topicId !== "mathville:place-value") {
+              return normalizeGenerated(fns[Math.floor(Math.random() * fns.length)](), topicId);
+            }
+            let raw, guard = 0;
+            do {
+              raw = fns[0]();
+              guard++;
+            } while (isAmbiguousPlaceValueQuestion(raw) && guard < 8);
+            return normalizeGenerated(raw, topicId);
+          }
         };
       }
       const staticQs = (chapter.questions || [])

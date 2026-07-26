@@ -37,18 +37,28 @@
     return weights[weights.length - 1].id;
   }
 
-  function pickQuestionFromTopic(topic) {
+  // Generator topics synthesize a fresh question every call — no repeat
+  // risk. Bank topics draw from a fixed pool, so pure random-with-
+  // replacement noticeably repeats questions well before the pool is
+  // exhausted (a 20-30 question chapter sampled 10x a session, replayed
+  // a few times, collides fast). excludeIds is the set of question ids
+  // already shown THIS session (tracked by the caller, reset when a new
+  // session/"Play Again" starts) — only falls back to allowing repeats
+  // once every question in the topic's pool has already been shown.
+  function pickQuestionFromTopic(topic, excludeIds) {
     if (topic.source === "generator") return topic.next();
     const bank = topic.bank;
-    return bank[Math.floor(Math.random() * bank.length)];
+    const fresh = excludeIds ? bank.filter((q) => !excludeIds.has(q.id)) : bank;
+    const pool = fresh.length ? fresh : bank;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
-  function pickNextQuestion(boxTopicIds, topicsById, statsCache) {
+  function pickNextQuestion(boxTopicIds, topicsById, statsCache, excludeIds) {
     const available = boxTopicIds.filter((id) => topicsById.has(id));
     if (!available.length) return null;
     const topicId = weightedPickTopicId(available, statsCache);
     const topic = topicsById.get(topicId);
-    const question = pickQuestionFromTopic(topic);
+    const question = pickQuestionFromTopic(topic, excludeIds);
     return { question, topic };
   }
 
