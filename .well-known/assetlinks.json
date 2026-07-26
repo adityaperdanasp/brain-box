@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "lol.brainbox.twa",
+    "sha256_cert_fingerprints": [
+      "CB:8D:EE:BC:CE:36:FC:68:C5:18:FF:FB:4F:88:FC:F5:99:41:D9:21:99:2B:D4:A7:14:41:DF:DF:E0:05:66:E0"
+    ]
+  }
+}]
