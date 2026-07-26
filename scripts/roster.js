@@ -10,11 +10,19 @@
    can have MULTIPLE children, added freely from the UI, each with their
    own Box (topic selection) and topicStats. Schema (Brain Box's own
    Firebase project):
-     parents/{parentKey}   = { name, pin, createdAt }
-     children/{childKey}   = { name, parentKey, createdAt, box: [topicId,...] }
+     parents/{parentKey}                = { name, pin, createdAt }
+     parents/{parentKey}/children/{key} = true   (index of this parent's kids)
+     children/{childKey}                = { name, parentKey, createdAt, box: [topicId,...] }
      children/{childKey}/topicStats/{topicId} = { correct, wrong, streak, lastWrongAt }
    childKey is "{parentKey}__{sanitized child name}" so two different
    parents can each have a child with the same first name.
+
+   listChildren looks up parents/{parentKey}/children (a plain key list)
+   and fetches each child by direct key, instead of querying `children`
+   with orderByChild("parentKey") — an unindexed query on that path
+   throws "Index not defined" against Realtime Database's default rules,
+   and fixing it would mean asking Adit to hand-edit the security rules
+   in the Firebase console. Direct-key lookups need no index at all.
    ================================================================= */
 (function () {
   const PARENT_KEY = "bb_parent";
@@ -93,17 +101,18 @@
       createdAt: Date.now(),
       box: []
     });
+    await db.ref(`parents/${parentKey}/children/${childKey}`).set(true);
     return { key: childKey, name: rawName, box: [] };
   }
 
   async function listChildren(db, parentKey) {
-    const snap = await db.ref("children").orderByChild("parentKey").equalTo(parentKey).get();
-    if (!snap.exists()) return [];
-    const out = [];
-    snap.forEach((child) => {
-      out.push({ key: child.key, ...child.val() });
-    });
-    return out;
+    const indexSnap = await db.ref(`parents/${parentKey}/children`).get();
+    if (!indexSnap.exists()) return [];
+    const childKeys = Object.keys(indexSnap.val());
+    const childSnaps = await Promise.all(childKeys.map((key) => db.ref(`children/${key}`).get()));
+    return childSnaps
+      .map((snap, i) => (snap.exists() ? { key: childKeys[i], ...snap.val() } : null))
+      .filter(Boolean);
   }
 
   window.BRAINBOX_ROSTER = {
