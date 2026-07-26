@@ -113,8 +113,12 @@
     function headingCss(angleRad) { return (angleRad * 180 / Math.PI) + 90; }
 
     function buildWorld() {
+      // Same trim mathville itself applies for Drive Mode city labels
+      // (script.js:596) — full chapter titles like "Place Value (Hundred
+      // to Million)" don't fit the little label pill; the parenthetical
+      // is reference detail that belongs on the topic screen, not here.
       state.cities = cityTopics.map((topic, i) => ({
-        id: topic.id, label: topic.label, emoji: topic.emoji,
+        id: topic.id, label: topic.label.replace(/\s*\(.*?\)/g, "").trim(), emoji: topic.emoji,
         x: DRIVE_CITY_POS[i].x, y: DRIVE_CITY_POS[i].y
       }));
 

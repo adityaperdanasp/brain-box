@@ -281,8 +281,20 @@ button.sc-game-card:active { transform: scale(0.98); }
 .bb-drive-exit { padding: 0.4rem 0.7rem; font-size: 0.9rem; box-shadow: 0 3px 0 rgba(0,0,0,0.08); }
 .bb-drive-world {
   position: relative;
+  z-index: 0; /* explicit (not auto) so obstacle/car/dino's own z-index values
+                 stay contained here instead of comparing directly against
+                 the question/end overlay's stacking level and painting
+                 on top of it */
   width: 100%;
-  aspect-ratio: 3 / 4;
+  /* Same technique as mathville/style.css:223 (height tied to viewport,
+     not aspect-ratio) — a fixed aspect-ratio made the world taller than
+     the actual visible viewport on phones once the HUD row and card
+     padding were accounted for, cutting the top off. 100dvh (not 100vh)
+     so mobile Safari's address-bar show/hide doesn't reintroduce the
+     same overflow. 150px ≈ card padding (2×24px) + HUD row (~40px) +
+     a little breathing room. */
+  height: calc(100dvh - 150px);
+  min-height: 320px;
   background: linear-gradient(180deg, #f2e9d8 0%, #F7EEE0 100%);
   border-radius: 20px;
   overflow: hidden;
@@ -351,7 +363,7 @@ button.sc-game-card:active { transform: scale(0.98); }
   border-radius: 50%; background: #C1793E; box-shadow: 0 2px 5px rgba(59,42,26,.3);
 }
 .bb-drive-question, .bb-drive-end {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
   background: rgba(61, 46, 34, 0.55); padding: 1rem;
 }
 .bb-drive-question.hidden, .bb-drive-end.hidden { display: none; }
