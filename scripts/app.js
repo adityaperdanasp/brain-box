@@ -55,12 +55,42 @@
     });
   }
 
-  /* ---- Menu screen ---- */
+  /* ---- Menu screen — same avatar-color-hash + bobbing-greeting pattern
+     as al-idrisi-games' hub (index.html:245-259, 337-375). ---- */
+  const SC_STUDENT_PALETTE = ["#F6C1C1", "#C1E1C1", "#C1D4F6", "#F6E3B4", "#D9C1F6", "#F6C1E0", "#C1F0E8"];
+  const SC_GREETING_COLORS = ["blue", "pink", "green"];
+  const SC_GREETINGS = [
+    "Keep up the great work, {name}!",
+    "Ready for another adventure, {name}?",
+    "You're doing awesome, {name}!",
+    "Let's learn something new today, {name}!",
+    "{name}, your streak is looking great!"
+  ];
+
+  function colorFor(id) {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+    return SC_STUDENT_PALETTE[hash % SC_STUDENT_PALETTE.length];
+  }
+
+  function renderGreeting(name) {
+    const dayIndex = Math.floor(Date.now() / 86400000) % SC_GREETINGS.length;
+    const nameColor = SC_GREETING_COLORS[dayIndex % SC_GREETING_COLORS.length];
+    const nameHtml = `<span class="sc-greeting-name ${nameColor}">${name}</span>`;
+    const words = ["🌟", ...SC_GREETINGS[dayIndex].split(" ").map((w) => w.replace("{name}", nameHtml))];
+    $("bb-menu-greeting").innerHTML = words
+      .map((w, i) => `<span class="sc-greeting-word" style="animation-delay:${i * 0.12}s">${w}</span>`)
+      .join(" ");
+  }
+
   async function enterMenu(child) {
     activeChild = child;
     statsCache = await window.BRAINBOX_MASTERY.loadStats(db, child.key);
-    $("bb-menu-title").textContent = `${child.name}'s Brain Box`;
+    $("bb-menu-avatar").style.background = colorFor(child.key);
+    $("bb-menu-avatar").textContent = child.name[0].toUpperCase();
+    $("bb-menu-name").textContent = child.name;
     $("bb-menu-box-count").textContent = `${(child.box || []).length} / ${window.BRAINBOX_BOX.MAX_BOX_TOPICS} topics in the Box`;
+    renderGreeting(child.name);
     showScreen("bb-screen-menu");
   }
 
@@ -68,7 +98,7 @@
     $("bb-menu-box-btn").onclick = () => enterBoxScreen();
     $("bb-menu-practice-btn").onclick = () => enterPracticeScreen();
     $("bb-menu-drive-btn").onclick = () => enterDriveScreen();
-    $("bb-menu-switch-btn").onclick = () => {
+    $("bb-menu-logout").onclick = () => {
       window.BRAINBOX_ROSTER.clearChild();
       activeChild = null;
       $("bb-auth-name").value = "";

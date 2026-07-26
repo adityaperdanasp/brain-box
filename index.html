@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Brain Box</title>
-<link rel="stylesheet" href="styles/style.css?v=6" />
+<link rel="stylesheet" href="styles/style.css?v=7" />
 </head>
 <body class="sc-page">
 
@@ -72,16 +72,50 @@
     <button class="sc-btn" id="bb-auth-submit">Register here 🚀</button>
   </div>
 
-  <!-- Main menu for the active child -->
+  <!-- Main menu for the active child — matches al-idrisi-games' landing
+       screen layout (header chip + hero + game-card list + greeting). -->
   <div class="sc-screen" id="bb-screen-menu">
-    <div class="sc-screen-title" id="bb-menu-title">Brain Box</div>
-    <div class="sc-subtitle" id="bb-menu-box-count"></div>
-    <div style="display:flex; flex-direction:column; gap:0.7rem; margin-top:1rem;">
-      <button class="sc-btn sc-btn-yellow" id="bb-menu-box-btn">📦 Choose Subject To Learn</button>
-      <button class="sc-btn" id="bb-menu-practice-btn">✏️ Practice</button>
-      <button class="sc-btn sc-btn-secondary" id="bb-menu-drive-btn">🚗 Drive Mode</button>
-      <button class="sc-chip" id="bb-menu-switch-btn" style="padding:0.6rem; text-align:center;">Switch Child</button>
+    <div class="sc-header">
+      <div class="sc-trophy">🧠</div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem;">
+        <div class="sc-player-chip">
+          <span class="sc-player-avatar" id="bb-menu-avatar"></span>
+          <span class="sc-player-name" id="bb-menu-name"></span>
+        </div>
+        <button id="bb-menu-logout" class="bb-logout-link">Log Out</button>
+      </div>
     </div>
+
+    <div class="sc-hero">
+      <div class="sc-hero-title"><span class="w1">Brain</span> <span class="w2">Box</span></div>
+      <div class="sc-hero-tagline" id="bb-menu-box-count"></div>
+    </div>
+
+    <div class="sc-game-list">
+      <button class="sc-game-card math" id="bb-menu-box-btn">
+        <span class="sc-game-icon">📦</span>
+        <span class="sc-game-txt">
+          <span class="sc-game-title">Choose Subject To Learn</span>
+          <span class="sc-game-sub">Pick up to 8 topics to mix</span>
+        </span>
+      </button>
+      <button class="sc-game-card lang" id="bb-menu-practice-btn">
+        <span class="sc-game-icon">✏️</span>
+        <span class="sc-game-txt">
+          <span class="sc-game-title">Practice</span>
+          <span class="sc-game-sub">10 mixed questions</span>
+        </span>
+      </button>
+      <button class="sc-game-card solar" id="bb-menu-drive-btn">
+        <span class="sc-game-icon">🚗</span>
+        <span class="sc-game-txt">
+          <span class="sc-game-title">Drive Mode</span>
+          <span class="sc-game-sub">Outrun the dino, answer to score</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="sc-greeting" id="bb-menu-greeting"></div>
   </div>
 
   <!-- Box builder -->
@@ -112,8 +146,8 @@
 <script src="scripts/roster.js?v=3"></script>
 <script src="scripts/box.js?v=1"></script>
 <script src="scripts/practice.js?v=3"></script>
-<script src="scripts/drive-mode.js?v=2"></script>
+<script src="scripts/drive-mode.js?v=3"></script>
 <script src="scripts/bgm.js?v=1"></script>
-<script src="scripts/app.js?v=5"></script>
+<script src="scripts/app.js?v=6"></script>
 </body>
 </html>

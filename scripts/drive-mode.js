@@ -56,8 +56,27 @@
         <button class="sc-btn sc-btn-pink bb-drive-exit" id="bb-drive-exit">✕</button>
       </div>
       <div class="bb-drive-world" id="bb-drive-world">
-        <div class="bb-drive-dino" id="bb-drive-dino">🦖</div>
-        <div class="bb-drive-car" id="bb-drive-car">🚗</div>
+        <div class="bb-drive-dino" id="bb-drive-dino">
+          <svg viewBox="0 0 30 40" width="27" height="36">
+            <path d="M15 39 Q9 34 15 29 Q21 34 15 39 Z" fill="#5FA85A" stroke="#3F7A3D" stroke-width="1.2" />
+            <ellipse cx="15" cy="24" rx="10" ry="13" fill="#5FA85A" stroke="#3F7A3D" stroke-width="1.5" />
+            <rect class="bb-dino-leg bb-dino-leg-l" x="4" y="30" width="4" height="8" rx="2" fill="#3F7A3D" />
+            <rect class="bb-dino-leg bb-dino-leg-r" x="22" y="30" width="4" height="8" rx="2" fill="#3F7A3D" />
+            <circle cx="15" cy="10" r="9.5" fill="#5FA85A" stroke="#3F7A3D" stroke-width="1.5" />
+            <circle cx="15" cy="10" r="9.5" fill="rgba(191,227,240,.5)" stroke="#8fb9c9" stroke-width="1.5" />
+            <circle cx="15" cy="3.5" r="1.6" fill="#E4572E" />
+          </svg>
+        </div>
+        <div class="bb-drive-car" id="bb-drive-car">
+          <svg viewBox="0 0 26 40" width="23" height="36">
+            <rect x="3" y="1" width="20" height="38" rx="8" fill="#E4572E" stroke="#C6431F" stroke-width="1.5" />
+            <rect x="6" y="7" width="14" height="10" rx="2.5" fill="#BFE3F0" />
+            <rect x="0" y="9" width="4" height="8" rx="1.5" fill="#3B2A1A" />
+            <rect x="22" y="9" width="4" height="8" rx="1.5" fill="#3B2A1A" />
+            <rect x="0" y="23" width="4" height="8" rx="1.5" fill="#3B2A1A" />
+            <rect x="22" y="23" width="4" height="8" rx="1.5" fill="#3B2A1A" />
+          </svg>
+        </div>
       </div>
       <div class="bb-drive-joystick" id="bb-drive-joystick">
         <div class="bb-drive-joystick-knob" id="bb-drive-joystick-knob"></div>
@@ -279,6 +298,9 @@
           dinoEl.style.left = state.dino.x + "%";
           dinoEl.style.top = state.dino.y + "%";
           dinoEl.style.transform = `rotate(${headingCss(dAngle)}deg)`;
+          dinoEl.classList.add("walking");
+        } else {
+          dinoEl.classList.remove("walking");
         }
         checkCollisions();
       }
