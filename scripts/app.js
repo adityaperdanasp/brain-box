@@ -23,10 +23,13 @@
   }
 
   /* ---- Auth screen ---- */
+  const AUTH_SUBMIT_LABEL = { signup: "Register here 🚀", signin: "Let's Play 🚀" };
+
   function wireAuthScreen() {
     document.querySelectorAll(".sc-auth-tab").forEach((tab) => {
       tab.addEventListener("click", () => {
         document.querySelectorAll(".sc-auth-tab").forEach((t) => t.classList.toggle("active", t === tab));
+        $("bb-auth-submit").textContent = AUTH_SUBMIT_LABEL[tab.dataset.mode];
       });
     });
 
