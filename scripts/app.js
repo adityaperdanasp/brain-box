@@ -55,7 +55,13 @@
   }
 
   function renderChildrenList(parent, children) {
-    $("bb-children-title").textContent = `Hi, ${parent.name}! Pick a child`;
+    const hasChildren = children.length > 0;
+    $("bb-children-title").textContent = hasChildren
+      ? `Hi, ${parent.name}! Pick a child`
+      : `Hi, ${parent.name}! Add your first child`;
+    $("bb-children-subtitle").textContent = hasChildren
+      ? "Each child gets their own Box and progress."
+      : "Brain Box tracks each kid separately — add one to get started.";
     const listEl = $("bb-children-list");
     listEl.innerHTML = "";
     children.forEach((child) => {
@@ -69,6 +75,7 @@
     const formEl = $("bb-add-child-form");
     const nameInput = $("bb-add-child-name");
     const errEl = $("bb-add-child-error");
+    $("bb-add-child-btn").textContent = hasChildren ? "+ Add Another Child" : "+ Add Child";
 
     $("bb-add-child-btn").onclick = () => {
       formEl.style.display = "flex";

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Brain Box</title>
-<link rel="stylesheet" href="styles/style.css?v=3" />
+<link rel="stylesheet" href="styles/style.css?v=4" />
 </head>
 <body class="sc-page">
 
@@ -14,9 +14,9 @@
   <div class="sc-screen active" id="bb-screen-auth">
     <div class="sc-badge">🧠 Brain Box</div>
     <div class="sc-subtitle" style="text-align:center;">Mixed-topic practice for your kids</div>
-    <div class="sc-auth-toggle" style="display:flex; gap:0.5rem; margin: 1rem 0;">
-      <button class="sc-chip sc-auth-tab active" data-mode="signup" style="flex:1; padding:0.6rem;">Sign Up</button>
-      <button class="sc-chip sc-auth-tab" data-mode="signin" style="flex:1; padding:0.6rem;">Sign In</button>
+    <div class="sc-auth-toggle">
+      <button class="sc-auth-tab active" data-mode="signup">Sign Up</button>
+      <button class="sc-auth-tab" data-mode="signin">Sign In</button>
     </div>
     <div class="sc-field">
       <span class="sc-field-label">Your name</span>
@@ -33,6 +33,7 @@
   <!-- Children roster -->
   <div class="sc-screen" id="bb-screen-children">
     <div class="sc-screen-title" id="bb-children-title">Pick a child</div>
+    <div class="sc-subtitle" id="bb-children-subtitle">Each child gets their own Box and progress.</div>
     <div style="display:flex; flex-direction:column; gap:0.6rem; margin: 1rem 0;" id="bb-children-list"></div>
 
     <div class="sc-field" id="bb-add-child-form" style="display:none;">
@@ -45,7 +46,7 @@
       </div>
     </div>
 
-    <button class="sc-btn sc-btn-secondary" id="bb-add-child-btn">+ Add Child</button>
+    <button class="sc-btn sc-btn-secondary" id="bb-add-child-btn">+ Add Another Child</button>
     <button class="sc-btn sc-btn-pink" id="bb-signout-btn" style="margin-top:0.5rem;">Sign Out</button>
   </div>
 
@@ -54,7 +55,7 @@
     <div class="sc-screen-title" id="bb-menu-title">Brain Box</div>
     <div class="sc-subtitle" id="bb-menu-box-count"></div>
     <div style="display:flex; flex-direction:column; gap:0.7rem; margin-top:1rem;">
-      <button class="sc-btn sc-btn-yellow" id="bb-menu-box-btn">📦 Build My Box</button>
+      <button class="sc-btn sc-btn-yellow" id="bb-menu-box-btn">📦 Pilih Topik</button>
       <button class="sc-btn" id="bb-menu-practice-btn">✏️ Practice</button>
       <button class="sc-btn sc-btn-secondary" id="bb-menu-drive-btn">🚗 Drive Mode</button>
       <button class="sc-chip" id="bb-menu-switch-btn" style="padding:0.6rem; text-align:center;">Switch Child</button>
@@ -63,8 +64,8 @@
 
   <!-- Box builder -->
   <div class="sc-screen" id="bb-screen-box">
-    <div class="sc-screen-title">Build the Box</div>
-    <div class="sc-subtitle">Tap or drag topics in — up to 8, any subject.</div>
+    <div class="sc-screen-title">Pilih Topik Latihan</div>
+    <div class="sc-subtitle">Tandai topik yang bikin anak kesulitan — boleh campur dari pelajaran manapun (Math/Language/Science), sampai 8 topik. Soal latihan nanti diambil random dari topik-topik ini.</div>
     <div id="bb-box-container"></div>
     <button class="sc-btn" id="bb-box-done-btn" style="margin-top:1rem;">Done</button>
   </div>
@@ -90,6 +91,6 @@
 <script src="scripts/box.js?v=1"></script>
 <script src="scripts/practice.js?v=2"></script>
 <script src="scripts/drive-mode.js?v=1"></script>
-<script src="scripts/app.js?v=2"></script>
+<script src="scripts/app.js?v=3"></script>
 </body>
 </html>
