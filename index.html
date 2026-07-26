@@ -34,6 +34,17 @@
   <div class="sc-screen" id="bb-screen-children">
     <div class="sc-screen-title" id="bb-children-title">Pick a child</div>
     <div style="display:flex; flex-direction:column; gap:0.6rem; margin: 1rem 0;" id="bb-children-list"></div>
+
+    <div class="sc-field" id="bb-add-child-form" style="display:none;">
+      <span class="sc-field-label">Child's name</span>
+      <input type="text" class="sc-input" id="bb-add-child-name" placeholder="e.g. Azka" autocomplete="off" />
+      <div class="sc-error" id="bb-add-child-error"></div>
+      <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
+        <button class="sc-btn" id="bb-add-child-confirm" style="flex:1;">Add</button>
+        <button class="sc-btn sc-btn-secondary" id="bb-add-child-cancel" style="flex:1;">Cancel</button>
+      </div>
+    </div>
+
     <button class="sc-btn sc-btn-secondary" id="bb-add-child-btn">+ Add Child</button>
     <button class="sc-btn sc-btn-pink" id="bb-signout-btn" style="margin-top:0.5rem;">Sign Out</button>
   </div>
@@ -75,10 +86,10 @@
 <script src="scripts/firebase.js?v=1"></script>
 <script src="scripts/content-loader.js?v=1"></script>
 <script src="scripts/mastery.js?v=1"></script>
-<script src="scripts/roster.js?v=1"></script>
+<script src="scripts/roster.js?v=2"></script>
 <script src="scripts/box.js?v=1"></script>
 <script src="scripts/practice.js?v=1"></script>
 <script src="scripts/drive-mode.js?v=1"></script>
-<script src="scripts/app.js?v=1"></script>
+<script src="scripts/app.js?v=2"></script>
 </body>
 </html>

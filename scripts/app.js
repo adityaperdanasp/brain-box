@@ -66,17 +66,38 @@
       listEl.appendChild(card);
     });
 
-    $("bb-add-child-btn").onclick = async () => {
-      const name = prompt("Child's name?");
-      if (!name) return;
+    const formEl = $("bb-add-child-form");
+    const nameInput = $("bb-add-child-name");
+    const errEl = $("bb-add-child-error");
+
+    $("bb-add-child-btn").onclick = () => {
+      formEl.style.display = "flex";
+      $("bb-add-child-btn").style.display = "none";
+      nameInput.value = "";
+      clearError(errEl);
+      nameInput.focus();
+    };
+    $("bb-add-child-cancel").onclick = () => {
+      formEl.style.display = "none";
+      $("bb-add-child-btn").style.display = "block";
+    };
+    $("bb-add-child-confirm").onclick = async () => {
+      const name = nameInput.value.trim();
+      clearError(errEl);
+      if (!name) { showError(errEl, "Enter a name"); return; }
       try {
         const child = await window.BRAINBOX_ROSTER.addChild(db, parent.key, name);
         children.push(child);
-        renderChildrenList(parent, children);
+        renderChildrenList(parent, children); // re-renders with the form collapsed again
       } catch (e) {
-        alert(e.message);
+        showError(errEl, e.message);
       }
     };
+    formEl.style.display = "none";
+    $("bb-add-child-btn").style.display = "block";
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("bb-add-child-confirm").click();
+    });
 
     $("bb-signout-btn").onclick = () => {
       window.BRAINBOX_ROSTER.clearParent();
