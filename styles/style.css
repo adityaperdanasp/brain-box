@@ -380,6 +380,8 @@ button.sc-game-card:active { transform: scale(0.98); }
 .bb-practice-progress { margin-bottom: 0; }
 .bb-practice-card, .bb-practice-summary { display: flex; flex-direction: column; gap: 0.75rem; text-align: center; }
 .bb-practice-prompt { font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 1.1rem; }
+.bb-practice-diagram { display: flex; justify-content: center; background: #fff; border-radius: 14px; padding: 0.5rem; }
+.bb-practice-diagram svg { max-width: 100%; height: auto; }
 .bb-practice-options { display: flex; flex-direction: column; gap: 0.6rem; }
 .bb-practice-options button.bb-correct, .sc-btn.bb-correct { background: #c1e1c1; }
 .bb-practice-options button.bb-wrong, .sc-btn.bb-wrong { background: #f6c1c1; }

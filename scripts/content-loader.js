@@ -166,6 +166,12 @@
       topicId,
       originalType: "mc",
       prompt: raw.prompt || raw.question,
+      // azkauniverse's diagram questions (star-lifecycle/atom-structure/
+      // earth-rotation/globes-maps) carry an inline-SVG q.image the
+      // question is unanswerable without ("what does part ② point to?")
+      // — trusted content from playalidrisi.fun, same as prompt/options,
+      // so it's fine to render directly.
+      image: raw.image || null,
       options: shuffle(raw.options),
       answer
     };

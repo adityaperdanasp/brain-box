@@ -239,6 +239,7 @@
       questionEl.innerHTML = `
         <div class="sc-panel bb-drive-question-card">
           <div class="sc-field-label">${topic.emoji} ${topic.label}</div>
+          ${question.image ? `<div class="bb-practice-diagram">${question.image}</div>` : ""}
           <div class="bb-drive-question-prompt">${question.prompt}</div>
           <div class="bb-drive-question-options"></div>
         </div>
