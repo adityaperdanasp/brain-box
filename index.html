@@ -4,13 +4,55 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Brain Box</title>
-<link rel="stylesheet" href="styles/style.css?v=4" />
+<link rel="stylesheet" href="styles/style.css?v=5" />
 </head>
 <body class="sc-page">
 
+<!-- Page-level floating decoration (outside the app card) — ported from
+     al-idrisi-games/index.html:62-89, same values, own file. -->
+<div class="sc-blob" style="width:260px;height:260px;top:-120px;left:-80px;background:#F6E3B4;opacity:.7;"></div>
+<div class="sc-blob" style="width:180px;height:180px;bottom:-90px;right:-60px;background:#F6C1C1;opacity:.6;"></div>
+<div class="sc-blob" style="width:130px;height:130px;bottom:120px;left:-50px;background:#C1E1C1;opacity:.5;"></div>
+<div class="sc-blob" style="width:110px;height:110px;top:30%;right:-40px;background:#D9C1F6;opacity:.5;"></div>
+<div class="sc-blob" style="width:90px;height:90px;top:6%;right:26%;background:#C1D4F6;opacity:.4;"></div>
+<div class="sc-cloud sc-bob" style="top:60px;left:8%;width:64px;height:64px;--r:-6deg;"></div>
+<div class="sc-cloud" style="top:110px;left:calc(8% + 30px);width:34px;height:34px;"></div>
+<div class="sc-cloud sc-bob" style="top:170px;right:6%;width:52px;height:52px;--r:4deg;animation-delay:.5s;"></div>
+<div class="sc-cloud" style="top:200px;right:calc(6% + 34px);width:28px;height:28px;"></div>
+<div class="sc-cloud sc-bob" style="bottom:14%;left:4%;width:58px;height:58px;--r:2deg;animation-delay:.3s;"></div>
+<div class="sc-cloud" style="bottom:14%;left:calc(4% + 30px);width:30px;height:30px;"></div>
+<div class="sc-star sc-bob" style="top:14%;right:14%;width:34px;height:34px;background:#F6C1E0;--r:8deg;"></div>
+<div class="sc-star sc-bob" style="bottom:22%;left:10%;width:24px;height:24px;background:#D9C1F6;--r:-12deg;animation-delay:1s;"></div>
+<div class="sc-star" style="top:38%;left:5%;width:20px;height:20px;background:#F6E3B4;opacity:.9;"></div>
+<div class="sc-star sc-bob" style="top:8%;left:30%;width:20px;height:20px;background:#F6C1C1;--r:15deg;animation-delay:.8s;"></div>
+<div class="sc-star sc-bob" style="top:46%;right:20%;width:26px;height:26px;background:#C1E1C1;--r:-8deg;animation-delay:.2s;"></div>
+<div class="sc-star" style="bottom:34%;right:22%;width:16px;height:16px;background:#F6E3B4;opacity:.9;"></div>
+<div class="sc-star" style="bottom:42%;left:16%;width:16px;height:16px;background:#C1D4F6;opacity:.9;"></div>
+<div class="sc-balloon sc-bob" style="bottom:8%;right:8%;width:46px;height:46px;background:#F6E3B4;">
+  <span style="position:absolute;width:70px;height:16px;border:3px solid #C1D4F6;border-radius:50%;top:15px;left:-12px;transform:rotate(-18deg);"></span>
+</div>
+<div class="sc-balloon sc-bob" style="top:24%;left:20%;width:34px;height:34px;background:#F6C1C1;animation-delay:.6s;">
+  <span style="position:absolute;width:50px;height:12px;border:2px solid #F6E3B4;border-radius:50%;top:11px;left:-8px;transform:rotate(-18deg);"></span>
+</div>
+<div class="sc-dot" style="top:4%;left:50%;width:8px;height:8px;opacity:.8;"></div>
+<div class="sc-dot" style="top:22%;right:38%;width:6px;height:6px;opacity:.7;"></div>
+<div class="sc-dot" style="bottom:18%;left:40%;width:7px;height:7px;opacity:.7;"></div>
+<div class="sc-dot" style="bottom:30%;right:10%;width:9px;height:9px;opacity:.8;"></div>
+
 <div class="sc-card">
 
-  <!-- Auth: parent sign up / sign in -->
+  <!-- Card-level decoration, sits behind every screen (z-index:0), so the
+       app never feels bare even once you're past the landing screen. -->
+  <div class="sc-blob" style="top:10px;right:-16px;width:56px;height:56px;background:#F6E3B4;opacity:.8;z-index:0;"></div>
+  <div class="sc-star" style="top:60px;right:20px;width:16px;height:16px;background:#C1D4F6;z-index:0;"></div>
+  <div class="sc-blob" style="bottom:20px;left:-18px;width:70px;height:70px;background:#C1E1C1;opacity:.6;z-index:0;"></div>
+  <div class="sc-star" style="top:14px;left:150px;width:14px;height:14px;background:#F6C1E0;transform:rotate(10deg);z-index:0;"></div>
+  <div class="sc-dot" style="top:150px;left:8px;width:10px;height:10px;background:#F6C1C1;opacity:.9;z-index:0;"></div>
+  <div class="sc-emoji" style="bottom:180px;left:10px;font-size:16px;transform:rotate(-10deg);z-index:0;">⭐</div>
+  <div class="sc-emoji" style="top:34px;right:60px;font-size:13px;transform:rotate(8deg);z-index:0;">✨</div>
+
+  <!-- Auth: a child signs up or in directly, same as al-idrisi-games' hub
+       (no separate parent-account layer). -->
   <div class="sc-screen active" id="bb-screen-auth">
     <div class="sc-badge">🧠 Brain Box</div>
     <div class="sc-subtitle" style="text-align:center;">Mixed-topic practice for your kids</div>
@@ -20,7 +62,7 @@
     </div>
     <div class="sc-field">
       <span class="sc-field-label">Your name</span>
-      <input type="text" class="sc-input" id="bb-auth-name" placeholder="e.g. Adit" autocomplete="off" />
+      <input type="text" class="sc-input" id="bb-auth-name" placeholder="e.g. Azka" autocomplete="off" />
     </div>
     <div class="sc-field">
       <span class="sc-field-label">4-digit PIN</span>
@@ -28,26 +70,6 @@
     </div>
     <div class="sc-error" id="bb-auth-error"></div>
     <button class="sc-btn" id="bb-auth-submit">Register here 🚀</button>
-  </div>
-
-  <!-- Children roster -->
-  <div class="sc-screen" id="bb-screen-children">
-    <div class="sc-screen-title" id="bb-children-title">Pick a child</div>
-    <div class="sc-subtitle" id="bb-children-subtitle">Each child gets their own Box and progress.</div>
-    <div style="display:flex; flex-direction:column; gap:0.6rem; margin: 1rem 0;" id="bb-children-list"></div>
-
-    <div class="sc-field" id="bb-add-child-form" style="display:none;">
-      <span class="sc-field-label">Child's name</span>
-      <input type="text" class="sc-input" id="bb-add-child-name" placeholder="e.g. Azka" autocomplete="off" />
-      <div class="sc-error" id="bb-add-child-error"></div>
-      <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
-        <button class="sc-btn" id="bb-add-child-confirm" style="flex:1;">Add</button>
-        <button class="sc-btn sc-btn-secondary" id="bb-add-child-cancel" style="flex:1;">Cancel</button>
-      </div>
-    </div>
-
-    <button class="sc-btn sc-btn-secondary" id="bb-add-child-btn">+ Add Another Child</button>
-    <button class="sc-btn sc-btn-pink" id="bb-signout-btn" style="margin-top:0.5rem;">Sign Out</button>
   </div>
 
   <!-- Main menu for the active child -->
@@ -87,10 +109,11 @@
 <script src="scripts/firebase.js?v=1"></script>
 <script src="scripts/content-loader.js?v=1"></script>
 <script src="scripts/mastery.js?v=1"></script>
-<script src="scripts/roster.js?v=2"></script>
+<script src="scripts/roster.js?v=3"></script>
 <script src="scripts/box.js?v=1"></script>
 <script src="scripts/practice.js?v=2"></script>
 <script src="scripts/drive-mode.js?v=1"></script>
-<script src="scripts/app.js?v=4"></script>
+<script src="scripts/bgm.js?v=1"></script>
+<script src="scripts/app.js?v=5"></script>
 </body>
 </html>

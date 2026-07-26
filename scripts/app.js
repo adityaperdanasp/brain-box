@@ -1,5 +1,6 @@
-/* Brain Box — screen glue. Loads content once, wires auth -> children ->
-   menu -> box/practice/drive screens together. */
+/* Brain Box — screen glue. Loads content once, wires auth (child signs up
+   or in directly, matching al-idrisi-games' hub pattern) -> menu ->
+   box/practice/drive screens together. */
 (function () {
   const db = window.BB_DB;
   let allTopics = [];
@@ -40,85 +41,23 @@
       const errEl = $("bb-auth-error");
       clearError(errEl);
       try {
-        const parent = mode === "signup"
-          ? await window.BRAINBOX_ROSTER.signUpParent(db, name, pin)
-          : await window.BRAINBOX_ROSTER.signInParent(db, name, pin);
-        await enterChildrenScreen(parent);
+        const child = mode === "signup"
+          ? await window.BRAINBOX_ROSTER.signUpChild(db, name, pin)
+          : await window.BRAINBOX_ROSTER.signInChild(db, name, pin);
+        await enterMenu(child);
       } catch (e) {
         showError(errEl, e.message);
       }
     });
-  }
 
-  /* ---- Children screen ---- */
-  async function enterChildrenScreen(parent) {
-    const children = await window.BRAINBOX_ROSTER.listChildren(db, parent.key);
-    renderChildrenList(parent, children);
-    showScreen("bb-screen-children");
-  }
-
-  function renderChildrenList(parent, children) {
-    const hasChildren = children.length > 0;
-    $("bb-children-title").textContent = hasChildren
-      ? `Hi, ${parent.name}! Pick a child`
-      : `Hi, ${parent.name}! Add your first child`;
-    $("bb-children-subtitle").textContent = hasChildren
-      ? "Each child gets their own Box and progress."
-      : "Brain Box tracks each kid separately — add one to get started.";
-    const listEl = $("bb-children-list");
-    listEl.innerHTML = "";
-    children.forEach((child) => {
-      const card = document.createElement("button");
-      card.className = "sc-chip bb-child-card";
-      card.textContent = child.name;
-      card.onclick = () => enterMenu(child);
-      listEl.appendChild(card);
+    $("bb-auth-pin").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("bb-auth-submit").click();
     });
-
-    const formEl = $("bb-add-child-form");
-    const nameInput = $("bb-add-child-name");
-    const errEl = $("bb-add-child-error");
-    $("bb-add-child-btn").textContent = hasChildren ? "+ Add Another Child" : "+ Add Child";
-
-    $("bb-add-child-btn").onclick = () => {
-      formEl.style.display = "flex";
-      $("bb-add-child-btn").style.display = "none";
-      nameInput.value = "";
-      clearError(errEl);
-      nameInput.focus();
-    };
-    $("bb-add-child-cancel").onclick = () => {
-      formEl.style.display = "none";
-      $("bb-add-child-btn").style.display = "block";
-    };
-    $("bb-add-child-confirm").onclick = async () => {
-      const name = nameInput.value.trim();
-      clearError(errEl);
-      if (!name) { showError(errEl, "Enter a name"); return; }
-      try {
-        const child = await window.BRAINBOX_ROSTER.addChild(db, parent.key, name);
-        children.push(child);
-        renderChildrenList(parent, children); // re-renders with the form collapsed again
-      } catch (e) {
-        showError(errEl, e.message);
-      }
-    };
-    formEl.style.display = "none";
-    $("bb-add-child-btn").style.display = "block";
-    nameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") $("bb-add-child-confirm").click();
-    });
-
-    $("bb-signout-btn").onclick = () => {
-      window.BRAINBOX_ROSTER.clearParent();
-      showScreen("bb-screen-auth");
-    };
   }
 
   /* ---- Menu screen ---- */
   async function enterMenu(child) {
     activeChild = child;
-    window.BRAINBOX_ROSTER.setActiveChild({ key: child.key, name: child.name });
     statsCache = await window.BRAINBOX_MASTERY.loadStats(db, child.key);
     $("bb-menu-title").textContent = `${child.name}'s Brain Box`;
     $("bb-menu-box-count").textContent = `${(child.box || []).length} / ${window.BRAINBOX_BOX.MAX_BOX_TOPICS} topics in the Box`;
@@ -130,8 +69,11 @@
     $("bb-menu-practice-btn").onclick = () => enterPracticeScreen();
     $("bb-menu-drive-btn").onclick = () => enterDriveScreen();
     $("bb-menu-switch-btn").onclick = () => {
-      const parent = window.BRAINBOX_ROSTER.getParent();
-      enterChildrenScreen(parent);
+      window.BRAINBOX_ROSTER.clearChild();
+      activeChild = null;
+      $("bb-auth-name").value = "";
+      $("bb-auth-pin").value = "";
+      showScreen("bb-screen-auth");
     };
   }
 
@@ -188,15 +130,18 @@
     allTopics = topics;
     topicsById = byId;
 
-    const parent = window.BRAINBOX_ROSTER.getParent();
-    if (parent) {
-      const activeChildRef = window.BRAINBOX_ROSTER.getActiveChild();
-      const children = await window.BRAINBOX_ROSTER.listChildren(db, parent.key);
-      if (activeChildRef && children.some((c) => c.key === activeChildRef.key)) {
-        enterMenu(children.find((c) => c.key === activeChildRef.key));
-      } else {
-        renderChildrenList(parent, children);
-        showScreen("bb-screen-children");
+    const savedChild = window.BRAINBOX_ROSTER.getChild();
+    if (savedChild) {
+      try {
+        const snap = await db.ref(`children/${savedChild.key}`).get();
+        if (snap.exists()) {
+          enterMenu({ key: savedChild.key, ...snap.val() });
+        } else {
+          window.BRAINBOX_ROSTER.clearChild();
+          showScreen("bb-screen-auth");
+        }
+      } catch (e) {
+        enterMenu(savedChild); // Firebase unreachable — fail open like al-idrisi does
       }
     } else {
       showScreen("bb-screen-auth");

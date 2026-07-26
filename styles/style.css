@@ -21,7 +21,8 @@ body.sc-page {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: hidden;
+  overflow: hidden;
+  position: relative;
 }
 
 h1, h2, h3, .sc-display {
@@ -188,6 +189,8 @@ h1, h2, h3, .sc-display {
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 .sc-dot { position: absolute; border-radius: 50%; background: #fff; pointer-events: none; }
+.sc-balloon { position: absolute; border-radius: 50%; pointer-events: none; }
+.sc-emoji { position: absolute; pointer-events: none; }
 
 @keyframes sc-bob {
   0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
