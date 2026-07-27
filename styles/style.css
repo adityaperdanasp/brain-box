@@ -401,3 +401,45 @@ button.sc-game-card:active { transform: scale(0.98); }
   letter-spacing: 0.5px; text-transform: uppercase; color: #8a6d3a; margin-bottom: 0.3rem;
 }
 .bb-practice-hint.hidden, .bb-practice-progress.hidden { display: none; }
+
+/* ---- Landing screen decorative walking dino ---- */
+/* Auth screen only wraps its form content by default (no fixed height),
+   so an absolute-positioned bottom element would sit right under the
+   button instead of the actual bottom of the card. Stretch it so the
+   dino has real walking room below the form. */
+#bb-screen-auth { min-height: calc(100vh - 3rem); }
+.bb-landing-dino-walk {
+  position: absolute;
+  bottom: 106px;
+  left: -60px;
+  width: 60px;
+  height: 60px;
+  z-index: 2;
+  pointer-events: none;
+  animation: bb-landing-dino-walk 8s linear infinite;
+}
+.bb-landing-dino {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 3px 4px rgba(59, 42, 26, 0.3));
+  /* Artwork faces left by default; mirror it so it faces the direction
+     it's walking (left to right), baked into the waddle keyframes below
+     since both would otherwise fight over the `transform` property. */
+  animation: bb-landing-dino-waddle 0.5s ease-in-out infinite;
+}
+/* One-directional walk: crosses from just off the left edge to just off
+   the right edge (.sc-card's overflow:hidden clips it out of view there),
+   holds off-screen briefly (the 87.5%-100% flat segment), then the
+   animation loop snaps it back to the left start — reads as "walks off
+   the right, reappears from the left" rather than turning around. */
+@keyframes bb-landing-dino-walk {
+  0%     { left: -60px; }
+  87.5%  { left: 100%; }
+  100%   { left: 100%; }
+}
+/* Little bounce/waddle so it reads as walking rather than sliding. */
+@keyframes bb-landing-dino-waddle {
+  0%, 100% { transform: scaleX(-1) translateY(0) rotate(-4deg); }
+  50%      { transform: scaleX(-1) translateY(-4px) rotate(4deg); }
+}

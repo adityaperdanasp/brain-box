@@ -9,7 +9,7 @@
 <meta name="color-scheme" content="light only" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<link rel="stylesheet" href="styles/style.css?v=11" />
+<link rel="stylesheet" href="styles/style.css?v=14" />
 </head>
 <body class="sc-page">
 
@@ -79,6 +79,14 @@
     </div>
     <div class="sc-error" id="bb-auth-error"></div>
     <button class="sc-btn" id="bb-auth-submit">Register here 🚀</button>
+
+    <!-- Decorative walking dino (astronaut-helmet T-Rex, same icon as
+         al-idrisi-games/dinorace) — cosmetic only, landing screen only.
+         Outer div walks + flips direction; inner img waddles — split in
+         two so both animations can each own the `transform` property. -->
+    <div class="bb-landing-dino-walk">
+      <img src="icons/astro-dino.png" alt="" class="bb-landing-dino" />
+    </div>
   </div>
 
   <!-- Main menu for the active child — matches al-idrisi-games' landing
