@@ -1,0 +1,126 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="bgclip2">
+      <rect x="8" y="8" width="496" height="496" rx="120" ry="120"/>
+    </clipPath>
+
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDF1D6"/>
+      <stop offset="55%" stop-color="#F8DFA0"/>
+      <stop offset="100%" stop-color="#EFC372"/>
+    </linearGradient>
+
+    <radialGradient id="cardGrad" cx="35%" cy="25%" r="85%">
+      <stop offset="0%" stop-color="#FFE0E6"/>
+      <stop offset="55%" stop-color="#F8B9C7"/>
+      <stop offset="100%" stop-color="#EE93A8"/>
+    </radialGradient>
+
+    <radialGradient id="brainGrad" cx="38%" cy="24%" r="80%">
+      <stop offset="0%" stop-color="#FFC4D2"/>
+      <stop offset="45%" stop-color="#F281A0"/>
+      <stop offset="100%" stop-color="#C74D6C"/>
+    </radialGradient>
+
+    <linearGradient id="stemGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E88DA0"/>
+      <stop offset="100%" stop-color="#C15A76"/>
+    </linearGradient>
+
+    <linearGradient id="droolGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F4FCFF"/>
+      <stop offset="100%" stop-color="#B9E4F3"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="10" result="off"/>
+      <feFlood flood-color="#7A3B2A" flood-opacity="0.35"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="cardShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="14" result="off"/>
+      <feFlood flood-color="#8A5426" flood-opacity="0.28"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="8" y="8" width="496" height="496" rx="120" ry="120" fill="url(#bgGrad)"/>
+
+  <g clip-path="url(#bgclip2)">
+    <!-- subtle top gloss sweep across the whole background -->
+    <ellipse cx="256" cy="10" rx="360" ry="140" fill="#FFFFFF" opacity="0.20"/>
+    <circle cx="440" cy="90" r="34" fill="#F6C1C1" opacity="0.35"/>
+    <circle cx="76" cy="432" r="26" fill="#C1E1C1" opacity="0.35"/>
+    <g fill="#FFFFFF" opacity="0.75">
+      <path d="M62 56 L70 76 L90 84 L70 92 L62 112 L54 92 L34 84 L54 76 Z"/>
+      <path d="M448 400 L454 414 L468 420 L454 426 L448 440 L442 426 L428 420 L442 414 Z"/>
+    </g>
+  </g>
+
+  <!-- brain, floating directly on the background with its own shadow -->
+  <g transform="translate(256 256) scale(1.39755)" filter="url(#softShadow)">
+    <rect x="-18" y="95" width="36" height="34" rx="16" fill="url(#stemGrad)"/>
+
+    <path d="
+      M -104 15
+      C -122 -18 -108 -55 -76 -68
+      C -70 -96 -38 -114 -6 -104
+      C 18 -122 56 -118 74 -96
+      C 108 -92 126 -60 114 -30
+      C 132 -10 130 24 108 42
+      C 116 72 96 100 62 106
+      C 54 122 30 132 6 126
+      C -12 138 -40 134 -54 118
+      C -86 122 -114 100 -112 68
+      C -132 54 -128 26 -104 15
+      Z"
+      fill="url(#brainGrad)" stroke="#B3435F" stroke-width="5" stroke-linejoin="round"/>
+
+    <!-- glossy highlight on the brain's upper-left lobe -->
+    <ellipse cx="-46" cy="-58" rx="34" ry="20" fill="#FFFFFF" opacity="0.45" transform="rotate(-24 -46 -58)"/>
+    <ellipse cx="18" cy="-88" rx="18" ry="10" fill="#FFFFFF" opacity="0.35" transform="rotate(-10 18 -88)"/>
+
+    <!-- soft contact shadow along the lower rim for extra depth -->
+    <path d="M -76 92 C -40 118 40 118 76 92 C 60 112 -60 112 -76 92 Z" fill="#8A2F49" opacity="0.18"/>
+
+    <!-- center fissure -->
+    <path d="M 4 -100 C -6 -70 8 -40 -2 -10 C 8 20 -6 50 4 90"
+      fill="none" stroke="#B3435F" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+    <!-- fold lines (right hemisphere) -->
+    <path d="M 30 -80 C 46 -70 46 -54 34 -46" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 58 -50 C 76 -42 78 -22 62 -12" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 70 20 C 88 26 90 46 74 56" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+
+    <!-- fold lines (left hemisphere) -->
+    <path d="M -36 -78 C -52 -68 -52 -52 -40 -44" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M -62 -46 C -80 -38 -82 -18 -66 -8" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M -72 24 C -90 30 -92 50 -76 60" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+
+    <!-- face -->
+    <circle cx="-34" cy="20" r="12" fill="#3D2E22"/>
+    <circle cx="30" cy="20" r="12" fill="#3D2E22"/>
+    <circle cx="-30" cy="16" r="4" fill="#FFFFFF"/>
+    <circle cx="34" cy="16" r="4" fill="#FFFFFF"/>
+    <circle cx="-52" cy="42" r="13" fill="#F6A6B8" opacity="0.75"/>
+    <circle cx="52" cy="42" r="13" fill="#F6A6B8" opacity="0.75"/>
+    <path d="M -20 46 C -8 60 8 60 20 46" fill="none" stroke="#3D2E22" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- cute drool drip from the mouth corner -->
+    <path d="M 19 45 C 26 55 34 63 32 76 C 31 88 16 88 14 76 C 12 63 13 55 19 45 Z"
+      fill="url(#droolGrad)" stroke="#8FCBE0" stroke-width="2.5"/>
+    <ellipse cx="19" cy="65" rx="3.5" ry="6" fill="#FFFFFF" opacity="0.7"/>
+  </g>
+</svg>

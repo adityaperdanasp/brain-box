@@ -1,0 +1,129 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDF1D6"/>
+      <stop offset="55%" stop-color="#F8DFA0"/>
+      <stop offset="100%" stop-color="#EFC372"/>
+    </linearGradient>
+
+    <radialGradient id="brainGrad4" cx="38%" cy="24%" r="80%">
+      <stop offset="0%" stop-color="#FFC4D2"/>
+      <stop offset="45%" stop-color="#F281A0"/>
+      <stop offset="100%" stop-color="#C74D6C"/>
+    </radialGradient>
+
+    <linearGradient id="boxFrontGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E7C08E"/>
+      <stop offset="100%" stop-color="#C6934F"/>
+    </linearGradient>
+    <linearGradient id="boxFlapGradL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D9A768"/>
+      <stop offset="100%" stop-color="#BE8A48"/>
+    </linearGradient>
+    <linearGradient id="boxFlapGradR" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D9A768"/>
+      <stop offset="100%" stop-color="#BE8A48"/>
+    </linearGradient>
+    <linearGradient id="droolGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F4FCFF"/>
+      <stop offset="100%" stop-color="#B9E4F3"/>
+    </linearGradient>
+
+    <filter id="softShadow4" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="9"/>
+      <feOffset dx="0" dy="9" result="off"/>
+      <feFlood flood-color="#7A3B2A" flood-opacity="0.3"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="boxShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dx="0" dy="12" result="off"/>
+      <feFlood flood-color="#6B4423" flood-opacity="0.35"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="bgclip4">
+      <rect x="8" y="8" width="496" height="496" rx="120" ry="120"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="8" y="8" width="496" height="496" rx="120" ry="120" fill="url(#bgGrad4)"/>
+  <g clip-path="url(#bgclip4)">
+    <ellipse cx="256" cy="10" rx="360" ry="140" fill="#FFFFFF" opacity="0.18"/>
+    <circle cx="440" cy="90" r="30" fill="#F6C1C1" opacity="0.3"/>
+    <circle cx="72" cy="120" r="20" fill="#C1E1C1" opacity="0.3"/>
+    <g fill="#FFFFFF" opacity="0.7">
+      <path d="M56 70 L63 87 L80 94 L63 101 L56 118 L49 101 L32 94 L49 87 Z"/>
+      <path d="M452 350 L458 364 L472 370 L458 376 L452 390 L446 376 L432 370 L446 364 Z"/>
+    </g>
+  </g>
+
+  <!-- open box flaps (behind the brain) -->
+  <g filter="url(#boxShadow)">
+    <path d="M 138 300 L 62 244 C 58 240 60 232 68 232 L 150 260 Z" fill="url(#boxFlapGradL)" stroke="#A97B3F" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M 374 300 L 450 244 C 454 240 452 232 444 232 L 362 260 Z" fill="url(#boxFlapGradR)" stroke="#A97B3F" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- brain peeking out (drawn after flaps, before box front so the front wall hides its lower half) -->
+  <g transform="translate(256 232) scale(1.24)" filter="url(#softShadow4)">
+    <path d="
+      M -104 15
+      C -122 -18 -108 -55 -76 -68
+      C -70 -96 -38 -114 -6 -104
+      C 18 -122 56 -118 74 -96
+      C 108 -92 126 -60 114 -30
+      C 132 -10 130 24 108 42
+      C 116 72 96 100 62 106
+      C 54 122 30 132 6 126
+      C -12 138 -40 134 -54 118
+      C -86 122 -114 100 -112 68
+      C -132 54 -128 26 -104 15
+      Z"
+      fill="url(#brainGrad4)" stroke="#B3435F" stroke-width="5" stroke-linejoin="round"/>
+
+    <ellipse cx="-46" cy="-58" rx="34" ry="20" fill="#FFFFFF" opacity="0.45" transform="rotate(-24 -46 -58)"/>
+    <ellipse cx="18" cy="-88" rx="18" ry="10" fill="#FFFFFF" opacity="0.35" transform="rotate(-10 18 -88)"/>
+
+    <path d="M 4 -100 C -6 -70 8 -40 -2 -10 C 8 20 -6 50 4 90"
+      fill="none" stroke="#B3435F" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+    <path d="M 30 -80 C 46 -70 46 -54 34 -46" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 58 -50 C 76 -42 78 -22 62 -12" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+
+    <path d="M -36 -78 C -52 -68 -52 -52 -40 -44" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M -62 -46 C -80 -38 -82 -18 -66 -8" fill="none" stroke="#B3435F" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+
+    <!-- face -->
+    <circle cx="-34" cy="20" r="12" fill="#3D2E22"/>
+    <circle cx="30" cy="20" r="12" fill="#3D2E22"/>
+    <circle cx="-30" cy="16" r="4" fill="#FFFFFF"/>
+    <circle cx="34" cy="16" r="4" fill="#FFFFFF"/>
+    <circle cx="-52" cy="42" r="13" fill="#F6A6B8" opacity="0.75"/>
+    <circle cx="52" cy="42" r="13" fill="#F6A6B8" opacity="0.75"/>
+    <path d="M -20 46 C -8 60 8 60 20 46" fill="none" stroke="#3D2E22" stroke-width="7" stroke-linecap="round"/>
+
+    <path d="M 19 45 C 26 55 34 63 32 76 C 31 88 16 88 14 76 C 12 63 13 55 19 45 Z"
+      fill="url(#droolGrad4)" stroke="#8FCBE0" stroke-width="2.5"/>
+    <ellipse cx="19" cy="65" rx="3.5" ry="6" fill="#FFFFFF" opacity="0.7"/>
+  </g>
+
+  <!-- box front wall (in front, hides the brain's lower half) -->
+  <g filter="url(#boxShadow)">
+    <rect x="126" y="292" width="260" height="150" rx="20" fill="url(#boxFrontGrad)" stroke="#A97B3F" stroke-width="5"/>
+    <!-- tape strip -->
+    <rect x="238" y="292" width="36" height="150" fill="#F1D9AE" opacity="0.55"/>
+    <!-- fold shadow line where flaps meet the front wall -->
+    <path d="M 126 300 L 386 300" stroke="#A97B3F" stroke-width="4" opacity="0.5"/>
+    <!-- little heart tag -->
+    <path d="M 256 330 c -10 -12 -28 -4 -28 10 c 0 12 20 26 28 32 c 8 -6 28 -20 28 -32 c 0 -14 -18 -22 -28 -10 Z" fill="#F0879C" stroke="#D9607A" stroke-width="3"/>
+  </g>
+</svg>
