@@ -69,12 +69,18 @@
 
     if (unlocked) return;
     unlocked = true;
-    track.play().then(() => { if (gain) fadeIn(); }).catch((err) => console.warn("[bgm] playback blocked:", err));
+    track.play().then(() => { if (gain) fadeIn(); }).catch((err) => {
+      console.warn("[bgm] playback blocked:", err);
+      unlocked = false; // let the next tap retry instead of giving up for the whole session
+    });
   }
 
-  // Not one-time-only — ctx.resume() can fail silently on iOS Safari, so
-  // every subsequent tap gets a chance to retry (unlockOnce() itself still
-  // only starts playback once, via the `unlocked` flag).
+  // Not one-time-only — ctx.resume() can fail silently on iOS Safari, and
+  // track.play() itself can reject on a given tap (autoplay heuristics,
+  // a transient network hiccup on the first gesture, etc.) — every
+  // subsequent tap gets a chance to retry (unlockOnce() resets `unlocked`
+  // back to false on failure specifically so this isn't a one-shot gate
+  // that permanently silences the whole session after one bad attempt).
   ["pointerdown", "touchend", "click", "keydown"].forEach((evt) =>
     document.addEventListener(evt, unlockOnce, { passive: true })
   );
