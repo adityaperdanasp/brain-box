@@ -1,12 +1,17 @@
-/* Brain Box — background music. Same track and same iOS-safe unlock
-   pattern as al-idrisi-games/hub-bgm.js, streamed live from
-   playalidrisi.fun (same public-asset approach as the question content
-   in content-loader.js) instead of a copied local file.
+/* Brain Box — background music. Same track as al-idrisi-games/hub-bgm.js,
+   streamed live from playalidrisi.fun (same public-asset approach as the
+   question content in content-loader.js) instead of a copied local file.
 
-   Volume goes through the Web Audio API (GainNode), not the <audio>
-   element's own .volume — iOS Safari ignores that property entirely
-   (only the hardware volume buttons change loudness), so a GainNode is
-   the only way volume actually changes on iPhone. */
+   Volume: plain <audio>.volume works fine everywhere EXCEPT iOS Safari,
+   which silently ignores it (only the hardware buttons change loudness
+   there) — a Web Audio API GainNode is the only way volume actually
+   changes on iPhone. So: set .volume directly as the baseline (covers
+   Android/desktop/everything else), and layer the GainNode graph on top
+   only as an iOS enhancement — wrapped in its own try/catch so if IT
+   fails (e.g. a CORS/WebView quirk), playback still starts via the plain
+   .play() call instead of the whole function silently aborting before
+   ever reaching it. That was the actual bug on Android: the graph setup
+   threw, so track.play() never ran at all. */
 (function () {
   const VOLUME = 0.30;
   const FADE_MS = 400;
@@ -15,6 +20,7 @@
   track.loop = true;
   track.preload = "auto";
   track.crossOrigin = "anonymous";
+  track.volume = VOLUME;
 
   let ctx = null;
   let gain = null;
@@ -53,12 +59,17 @@
   }
 
   function unlockOnce() {
-    ensureAudioGraph();
-    kickAudioContext();
+    // Enhancement only — must never block track.play() below from running.
+    try {
+      ensureAudioGraph();
+      kickAudioContext();
+    } catch (err) {
+      console.warn("[bgm] Web Audio graph unavailable, using plain <audio> volume instead:", err);
+    }
 
     if (unlocked) return;
     unlocked = true;
-    track.play().then(fadeIn).catch((err) => console.warn("[bgm] playback blocked:", err));
+    track.play().then(() => { if (gain) fadeIn(); }).catch((err) => console.warn("[bgm] playback blocked:", err));
   }
 
   // Not one-time-only — ctx.resume() can fail silently on iOS Safari, so

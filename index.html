@@ -6,9 +6,10 @@
 <title>Brain Box</title>
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#f6e3b4" />
+<meta name="color-scheme" content="light only" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<link rel="stylesheet" href="styles/style.css?v=10" />
+<link rel="stylesheet" href="styles/style.css?v=11" />
 </head>
 <body class="sc-page">
 
@@ -46,10 +47,14 @@
 <div class="sc-card">
 
   <!-- Card-level decoration, sits behind every screen (z-index:0), so the
-       app never feels bare even once you're past the landing screen. -->
-  <div class="sc-blob" style="top:10px;right:-16px;width:56px;height:56px;background:#F6E3B4;opacity:.8;z-index:0;"></div>
-  <div class="sc-star" style="top:60px;right:20px;width:16px;height:16px;background:#C1D4F6;z-index:0;"></div>
-  <div class="sc-blob" style="bottom:20px;left:-18px;width:70px;height:70px;background:#C1E1C1;opacity:.6;z-index:0;"></div>
+       app never feels bare even once you're past the landing screen.
+       Kept fully inside the card bounds (no negative offsets) rather than
+       relying on overflow:hidden clipping — that clip wasn't reliable
+       inside the Android TWA's WebView, so a "half-poking-out" blob/star
+       rendered as a stray shape sticking past the screen edge instead. -->
+  <div class="sc-blob" style="top:10px;right:4px;width:56px;height:56px;background:#F6E3B4;opacity:.8;z-index:0;"></div>
+  <div class="sc-star" style="top:60px;right:24px;width:16px;height:16px;background:#C1D4F6;z-index:0;"></div>
+  <div class="sc-blob" style="bottom:20px;left:4px;width:70px;height:70px;background:#C1E1C1;opacity:.6;z-index:0;"></div>
   <div class="sc-star" style="top:14px;left:150px;width:14px;height:14px;background:#F6C1E0;transform:rotate(10deg);z-index:0;"></div>
   <div class="sc-dot" style="top:150px;left:8px;width:10px;height:10px;background:#F6C1C1;opacity:.9;z-index:0;"></div>
   <div class="sc-emoji" style="bottom:180px;left:10px;font-size:16px;transform:rotate(-10deg);z-index:0;">⭐</div>
@@ -151,7 +156,7 @@
 <script src="scripts/box.js?v=1"></script>
 <script src="scripts/practice.js?v=4"></script>
 <script src="scripts/drive-mode.js?v=5"></script>
-<script src="scripts/bgm.js?v=1"></script>
+<script src="scripts/bgm.js?v=2"></script>
 <script src="scripts/app.js?v=6"></script>
 </body>
 </html>

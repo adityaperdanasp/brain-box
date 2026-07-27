@@ -12,6 +12,14 @@
 
 * { box-sizing: border-box; }
 
+/* Sticker Craft is a light-only design — without this, Android WebView's
+   "Force Dark" auto-darkens the whole page (inverts lightness per-hue)
+   for any site that doesn't explicitly declare it's light-only, since
+   the OS is in dark mode. The <meta name="color-scheme"> tag in
+   index.html covers the document; this covers the root element itself. */
+html, body.sc-page { color-scheme: light only; }
+html { overflow-x: hidden; }
+
 body.sc-page {
   margin: 0;
   min-height: 100vh;
