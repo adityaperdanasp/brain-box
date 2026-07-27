@@ -416,12 +416,12 @@ button.sc-game-card:active { transform: scale(0.98); }
 .bb-landing-dino-walk {
   position: absolute;
   bottom: 106px;
-  left: -60px;
+  left: -84px;
   width: 60px;
   height: 60px;
   z-index: 2;
   pointer-events: none;
-  animation: bb-landing-dino-walk 8s linear infinite;
+  animation: bb-landing-dino-walk 9s linear infinite;
 }
 .bb-landing-dino {
   display: block;
@@ -433,15 +433,18 @@ button.sc-game-card:active { transform: scale(0.98); }
      since both would otherwise fight over the `transform` property. */
   animation: bb-landing-dino-waddle 0.5s ease-in-out infinite;
 }
-/* One-directional walk: crosses from just off the left edge to just off
-   the right edge (.sc-card's overflow:hidden clips it out of view there),
-   holds off-screen briefly (the 87.5%-100% flat segment), then the
-   animation loop snaps it back to the left start — reads as "walks off
-   the right, reappears from the left" rather than turning around. */
+/* One-directional walk: crosses from fully off the left edge to fully
+   off the right edge, then holds there for a 2s pause (the 77.78%-100%
+   flat segment, out of a 9s total cycle — 7s walking + 2s hidden)
+   before the loop snaps back to the left start. The +/-84px (not just
+   +/-60px, the sprite's own width) accounts for .sc-card's 1.5rem
+   padding around this screen — without it, the last bit of the sprite
+   stayed visible in that padding strip instead of being fully clipped
+   by the card's own overflow:hidden edge. */
 @keyframes bb-landing-dino-walk {
-  0%     { left: -60px; }
-  87.5%  { left: 100%; }
-  100%   { left: 100%; }
+  0%      { left: -84px; }
+  77.78%  { left: calc(100% + 84px); }
+  100%    { left: calc(100% + 84px); }
 }
 /* Little bounce/waddle so it reads as walking rather than sliding. */
 @keyframes bb-landing-dino-waddle {
