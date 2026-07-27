@@ -185,7 +185,7 @@ h1, h2, h3, .sc-display {
 .sc-hero-title { font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 2.375rem; line-height: 1.05; display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; }
 .sc-hero-title .w1 { color: #e8735a; display: inline-block; transform: rotate(-4deg); }
 .sc-hero-title .w2 { color: #2f4c8c; display: inline-block; transform: rotate(3deg); }
-.sc-hero-title .w3 { color: #3f7a4e; display: inline-block; transform: rotate(-3deg); }
+.sc-hero-title .w3 { color: #c1e1c1; -webkit-text-stroke: 1px #3f7a4e; display: inline-block; transform: rotate(-3deg); }
 .bb-hero-icon { width: 42px; height: auto; display: inline-block; animation: bb-hero-icon-sway 3.2s ease-in-out infinite; }
 @keyframes bb-hero-icon-sway {
   0%, 100% { transform: rotate(-6deg); }
