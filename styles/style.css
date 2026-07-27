@@ -316,6 +316,11 @@ button.sc-game-card:active { transform: scale(0.98); }
   transition: transform .12s ease-out;
 }
 .bb-drive-car.bitten { animation: bb-drive-bitten .35s ease-in-out 3; }
+.bb-drive-car.invincible { animation: bb-drive-invincible .4s ease-in-out infinite; }
+@keyframes bb-drive-invincible {
+  0%, 100% { filter: drop-shadow(0 0 8px #6FD68A) drop-shadow(0 3px 4px rgba(59,42,26,.35)); opacity: 1; }
+  50% { filter: drop-shadow(0 0 14px #6FD68A) drop-shadow(0 3px 4px rgba(59,42,26,.35)); opacity: .7; }
+}
 @keyframes bb-drive-bitten {
   0%, 100% { filter: drop-shadow(0 3px 4px rgba(59,42,26,.35)); }
   50% { filter: drop-shadow(0 0 8px #D64545) brightness(1.3); }

@@ -30,6 +30,7 @@
   const DRIVE_SCORE_TARGET = 25;
   const DRIVE_MAX_BITES = 3;
   const DRIVE_BITE_COOLDOWN_MS = 3000;
+  const DRIVE_CORRECT_ANSWER_IMMUNITY_MS = 2000;
   const DRIVE_BITE_KNOCKBACK = 16;
   const DRIVE_CAR_PX_R = 13.5;
   const DRIVE_OBSTACLE_PX_R = 11;
@@ -254,6 +255,13 @@
           optionsEl.querySelectorAll("button").forEach((b) => (b.disabled = true));
           btn.classList.add(isCorrect ? "bb-correct" : "bb-wrong");
           window.BRAINBOX_MASTERY.recordAnswer(db, childId, topic.id, isCorrect, statsCache);
+          if (isCorrect) {
+            // brief invincibility reward — the dino can't bite the car
+            // for a couple seconds after answering correctly
+            state.biteCooldownUntil = Math.max(state.biteCooldownUntil, performance.now() + DRIVE_CORRECT_ANSWER_IMMUNITY_MS);
+            carEl.classList.add("invincible");
+            setTimeout(() => carEl.classList.remove("invincible"), DRIVE_CORRECT_ANSWER_IMMUNITY_MS);
+          }
           setTimeout(() => {
             questionEl.classList.add("hidden");
             state.paused = false;

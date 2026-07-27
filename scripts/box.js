@@ -43,6 +43,23 @@
     container.appendChild(dropEl);
     container.appendChild(poolEl);
 
+    // Single shared reference to whatever drag clone is currently live.
+    // render() rebuilds every tile from scratch (wiping poolEl/dropEl),
+    // which used to orphan an in-progress drag's clone — it lives in
+    // document.body, not poolEl/dropEl, so a mid-drag render() (fired by
+    // a quick second tap on another tile) left it floating forever with
+    // no pointerup ever able to reach it again (capture is lost once its
+    // source tile is removed from the DOM). That's the "card follows you
+    // into Drive Mode" bug — tracking the clone here lets render() (and
+    // pointercancel) always clean it up before rebuilding.
+    let activeClone = null;
+    function cleanupActiveClone() {
+      if (activeClone) {
+        activeClone.remove();
+        activeClone = null;
+      }
+    }
+
     function tileFor(topic, inBox) {
       const tile = el(
         "div",
@@ -56,6 +73,7 @@
     }
 
     function render() {
+      cleanupActiveClone();
       poolEl.innerHTML = "";
       dropEl.querySelectorAll(".sc-topic-tile").forEach((n) => n.remove());
       countEl.textContent = `${boxIds.length} / ${MAX_BOX_TOPICS} topics in the Box`;
@@ -122,6 +140,7 @@
         const dy = e.clientY - startY;
         if (!moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) {
           moved = true;
+          cleanupActiveClone(); // only one drag clone should ever exist at a time
           clone = tile.cloneNode(true);
           clone.style.position = "fixed";
           clone.style.zIndex = 999;
@@ -129,6 +148,7 @@
           clone.style.pointerEvents = "none";
           clone.style.width = tile.offsetWidth + "px";
           document.body.appendChild(clone);
+          activeClone = clone;
         }
         if (moved && clone) {
           clone.style.left = e.clientX - tile.offsetWidth / 2 + "px";
@@ -140,7 +160,7 @@
         dragging = false;
         if (clone) {
           const overDrop = isOverElement(e.clientX, e.clientY, dropEl);
-          clone.remove();
+          cleanupActiveClone();
           clone = null;
           if (inBox && !overDrop) removeFromBox(topic.id);
           else if (!inBox && overDrop) addToBox(topic.id);
@@ -149,6 +169,16 @@
         // plain tap — toggle
         if (inBox) removeFromBox(topic.id);
         else addToBox(topic.id);
+      });
+
+      // A browser/OS-initiated gesture (scroll takeover, app switch, etc.)
+      // can end a touch without ever firing pointerup — without this the
+      // clone and `dragging` flag would be stuck forever.
+      tile.addEventListener("pointercancel", () => {
+        dragging = false;
+        moved = false;
+        cleanupActiveClone();
+        clone = null;
       });
     }
 
