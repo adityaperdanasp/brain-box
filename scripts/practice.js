@@ -75,7 +75,7 @@
     function showThinking(hintEl) {
       hintEl.innerHTML = `
         <div class="bb-ai-row">
-          <span class="bb-ai-avatar">🤖</span>
+          <img class="bb-ai-avatar" src="icons/icon-192.png" alt="" />
           <span class="bb-ai-thinking-label">AI Tutor is thinking</span>
           <span class="bb-ai-thinking-dots"><span></span><span></span><span></span></span>
         </div>
@@ -104,9 +104,10 @@
         hintEl.innerHTML = "";
         const row = document.createElement("div");
         row.className = "bb-ai-row";
-        const avatar = document.createElement("span");
+        const avatar = document.createElement("img");
         avatar.className = "bb-ai-avatar";
-        avatar.textContent = "🤖";
+        avatar.src = "icons/icon-192.png";
+        avatar.alt = "";
         const label = document.createElement("span");
         label.className = "bb-practice-hint-label";
         label.textContent = "AI Tutor";
