@@ -151,6 +151,7 @@
       topicsById,
       db,
       childId: activeChild.key,
+      childName: activeChild.name,
       statsCache,
       onExit: () => enterMenu(activeChild)
     });

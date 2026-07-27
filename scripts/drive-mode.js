@@ -47,7 +47,7 @@
   function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
   function mount(container, opts) {
-    const { boxTopicIds, topicsById, db, childId, statsCache, onExit } = opts;
+    const { boxTopicIds, topicsById, db, childId, childName, statsCache, onExit } = opts;
     const cityTopics = boxTopicIds.map((id) => topicsById.get(id)).filter(Boolean).slice(0, 8);
 
     container.innerHTML = `
@@ -255,6 +255,10 @@
           optionsEl.querySelectorAll("button").forEach((b) => (b.disabled = true));
           btn.classList.add(isCorrect ? "bb-correct" : "bb-wrong");
           window.BRAINBOX_MASTERY.recordAnswer(db, childId, topic.id, isCorrect, statsCache);
+          if (window.BRAINBOX_VOICE) {
+            if (isCorrect) window.BRAINBOX_VOICE.speakPraise(childName);
+            else window.BRAINBOX_VOICE.speakEncouragement(childName);
+          }
           if (isCorrect) {
             // brief invincibility reward — the dino can't bite the car
             // for a couple seconds after answering correctly

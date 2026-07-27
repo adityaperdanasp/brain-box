@@ -14,6 +14,7 @@
    threw, so track.play() never ran at all. */
 (function () {
   const VOLUME = 0.30;
+  const DUCK_VOLUME = 0.03;
   const FADE_MS = 400;
 
   const track = new Audio("https://playalidrisi.fun/audio/bgm/hub.mp3");
@@ -37,12 +38,30 @@
     source.connect(gain).connect(ctx.destination);
   }
 
-  function fadeIn() {
+  function fadeTo(vol) {
     if (!gain || !ctx) return;
     const now = ctx.currentTime;
     gain.gain.cancelScheduledValues(now);
     gain.gain.setValueAtTime(gain.gain.value, now);
-    gain.gain.linearRampToValueAtTime(VOLUME, now + FADE_MS / 1000);
+    gain.gain.linearRampToValueAtTime(vol, now + FADE_MS / 1000);
+  }
+
+  // Lowers bgm volume for `ms` (call right before a voice-cheering clip
+  // plays), then restores it. Sets track.volume directly too, not just the
+  // GainNode — the node is an iOS-only enhancement layered on top (see file
+  // header), so this needs to work even when it's unavailable.
+  let duckedUntil = 0;
+  function duck(ms) {
+    const duration = ms || 2500;
+    duckedUntil = Math.max(duckedUntil, Date.now() + duration);
+    track.volume = DUCK_VOLUME;
+    fadeTo(DUCK_VOLUME);
+    setTimeout(() => {
+      if (Date.now() >= duckedUntil) {
+        track.volume = VOLUME;
+        fadeTo(VOLUME);
+      }
+    }, duration + 20);
   }
 
   // iOS Safari sometimes leaves the AudioContext stuck "suspended" even
@@ -69,7 +88,7 @@
 
     if (unlocked) return;
     unlocked = true;
-    track.play().then(() => { if (gain) fadeIn(); }).catch((err) => {
+    track.play().then(() => { if (gain) fadeTo(VOLUME); }).catch((err) => {
       console.warn("[bgm] playback blocked:", err);
       unlocked = false; // let the next tap retry instead of giving up for the whole session
     });
@@ -84,4 +103,6 @@
   ["pointerdown", "touchend", "click", "keydown"].forEach((evt) =>
     document.addEventListener(evt, unlockOnce, { passive: true })
   );
+
+  window.BRAINBOX_BGM = { duck };
 })();

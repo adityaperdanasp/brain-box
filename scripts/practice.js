@@ -62,13 +62,29 @@
       });
       if (isCorrect) correctCount++;
       window.BRAINBOX_MASTERY.recordAnswer(db, childId, topic.id, isCorrect, statsCache);
+      if (window.BRAINBOX_VOICE) {
+        if (isCorrect) window.BRAINBOX_VOICE.speakPraise(childName);
+        else window.BRAINBOX_VOICE.speakEncouragement(childName);
+      }
       nextBtn.classList.remove("hidden");
       nextBtn.onclick = () => { index++; index < SESSION_LENGTH ? renderQuestion() : renderSummary(); };
 
       if (!isCorrect) fetchHint(question, topic, chosen, hintEl);
     }
 
+    function showThinking(hintEl) {
+      hintEl.innerHTML = `
+        <div class="bb-ai-row">
+          <span class="bb-ai-avatar">🤖</span>
+          <span class="bb-ai-thinking-label">AI Tutor is thinking</span>
+          <span class="bb-ai-thinking-dots"><span></span><span></span><span></span></span>
+        </div>
+      `;
+      hintEl.classList.remove("hidden");
+    }
+
     async function fetchHint(question, topic, chosen, hintEl) {
+      showThinking(hintEl); // visible right away — the AI Tutor "arrives" before its answer does
       try {
         const res = await fetch("/api/generate-hint", {
           method: "POST",
@@ -82,20 +98,27 @@
             topic: topic.label
           })
         });
-        if (!res.ok) return; // fail silently — hint card just doesn't show
+        if (!res.ok) { hintEl.classList.add("hidden"); return; } // fail silently — hint card just doesn't show
         const data = await res.json();
-        if (!data.hint) return;
+        if (!data.hint) { hintEl.classList.add("hidden"); return; }
         hintEl.innerHTML = "";
-        const label = document.createElement("div");
+        const row = document.createElement("div");
+        row.className = "bb-ai-row";
+        const avatar = document.createElement("span");
+        avatar.className = "bb-ai-avatar";
+        avatar.textContent = "🤖";
+        const label = document.createElement("span");
         label.className = "bb-practice-hint-label";
-        label.textContent = "🤖 AI Tutor";
+        label.textContent = "AI Tutor";
+        row.appendChild(avatar);
+        row.appendChild(label);
         const body = document.createElement("div");
         body.textContent = data.hint;
-        hintEl.appendChild(label);
+        hintEl.appendChild(row);
         hintEl.appendChild(body);
         hintEl.classList.remove("hidden");
       } catch (e) {
-        // network error — no hint, game still moves on
+        hintEl.classList.add("hidden"); // network error — no hint, game still moves on
       }
     }
 
