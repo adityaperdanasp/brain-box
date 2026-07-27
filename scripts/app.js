@@ -13,6 +13,11 @@
   function showScreen(id) {
     document.querySelectorAll(".sc-screen").forEach((s) => s.classList.remove("active"));
     $(id).classList.add("active");
+    // Android WebView (inside the TWA) has occasionally left stale pixels
+    // from the screen just hidden visibly overlapping the new one — a
+    // compositing/paint glitch, not a real display:none failure. Forcing
+    // a synchronous reflow on the next frame reliably clears it.
+    requestAnimationFrame(() => { void document.body.offsetHeight; });
   }
 
   function showError(el, msg) {
