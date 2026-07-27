@@ -410,7 +410,7 @@ button.sc-game-card:active { transform: scale(0.98); }
 /* ---- AI Tutor avatar (hint card header) ---- */
 .bb-ai-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; }
 .bb-ai-avatar {
-  width: 22px; height: 22px; border-radius: 7px; display: inline-block;
+  width: 26px; height: auto; display: inline-block;
   animation: bb-ai-avatar-bob 1s ease-in-out infinite;
 }
 @keyframes bb-ai-avatar-bob {
