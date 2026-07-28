@@ -54,6 +54,21 @@ h1, h2, h3, .sc-display {
   .sc-card { border-radius: 0; box-shadow: none; min-height: 100vh; }
 }
 
+/* ---- Tablet layout (e.g. iPad/OPPO Pad-class devices, both orientations) ----
+   Everything below 700px (all phones) is completely untouched — this only
+   widens the card so tablets don't just show a letterboxed phone strip in
+   the middle of a huge screen. Drive Mode is deliberately excluded: its
+   obstacle spacing/dino speed are tuned in % of the world's width (ported
+   from mathville), so stretching that specific screen would need its own
+   gameplay re-tuning — only its chrome gets more breathing room, not the
+   actual play area. */
+@media (min-width: 700px) {
+  .sc-card { max-width: 640px; }
+  .sc-hero-title { font-size: 2.9rem; }
+  .bb-hero-icon { width: 52px; }
+  #bb-screen-drive { max-width: 430px; margin: 0 auto; }
+}
+
 /* ---- Screens ---- */
 .sc-screen { display: none; flex-direction: column; position: relative; z-index: 1; }
 .sc-screen.active { display: flex; }
