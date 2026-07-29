@@ -109,6 +109,28 @@
     line-height:1;
   }
   .theme-toggle:active{ transform: translateY(-50%) scale(0.9); }
+  .back-btn{
+    position:absolute;
+    left:0;
+    top:50%;
+    transform: translateY(-50%);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 19px;
+    cursor:pointer;
+    box-shadow: 0 4px 12px var(--card-shadow);
+    transition: transform .12s ease;
+    line-height:1;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:inherit;
+  }
+  .back-btn:active{ transform: translateY(-50%) scale(0.9); }
   .brand h1{
     font-size: 26px;
     margin:0;
@@ -548,6 +570,11 @@
 
 <div class="app">
   <div class="brand">
+    <!-- Only present when embedded inside Brain Box (see index.html at
+         the repo root) — this file is otherwise a plain copy of the
+         standalone dinorace.lol project, which has nowhere to "go back"
+         to. -->
+    <a class="back-btn" href="../index.html" title="Kembali ke AI BrainBox" aria-label="Kembali ke AI BrainBox">⬅️</a>
     <h1>🦕 DinoRace<span class="dot">.</span></h1>
     <button class="theme-toggle" id="themeToggle" title="Ganti tema" aria-label="Ganti tema">🎨</button>
   </div>
