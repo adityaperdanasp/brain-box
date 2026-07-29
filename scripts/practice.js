@@ -85,6 +85,11 @@
 
     async function fetchHint(question, topic, chosen, hintEl) {
       showThinking(hintEl); // visible right away — the AI Tutor "arrives" before its answer does
+      // Usage-tracking beacon — fired exactly here, alongside the real
+      // Anthropic call below, per the "user main brain-box" = "submitted a
+      // prompt" definition (not page views). Fire-and-forget, never blocks
+      // or affects the hint UX either way.
+      fetch("/api/track", { method: "POST" }).catch(() => {});
       try {
         const res = await fetch("/api/generate-hint", {
           method: "POST",
