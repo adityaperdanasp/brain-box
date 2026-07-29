@@ -447,7 +447,7 @@ button.sc-game-card:active { transform: scale(0.98); }
 }
 .bb-practice-hint.hidden, .bb-practice-progress.hidden { display: none; }
 
-/* ---- AI Tutor avatar (hint card header) ---- */
+/* ---- Bo avatar (hint card header) ---- */
 .bb-ai-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; }
 .bb-ai-avatar {
   width: 26px; height: auto; display: inline-block;

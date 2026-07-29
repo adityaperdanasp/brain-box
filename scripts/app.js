@@ -127,10 +127,10 @@
     driveBtn.classList.toggle("sc-locked", boxEmpty);
     boxBtn.classList.toggle("sc-highlight", boxEmpty);
     practiceBtn.querySelector(".sc-game-sub").textContent = boxEmpty
-      ? "🔒 Pilih topik dulu ya!"
+      ? "🔒 Pick topics first!"
       : "10 mixed questions";
     driveBtn.querySelector(".sc-game-sub").textContent = boxEmpty
-      ? "🔒 Pilih topik dulu ya!"
+      ? "🔒 Pick topics first!"
       : "Outrun the dino, answer to score";
   }
 

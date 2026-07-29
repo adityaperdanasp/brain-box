@@ -1,9 +1,9 @@
 /* =================================================================
    Brain Box — practice session (non-Drive Mode): a plain sequence of
    mixed-subject MC questions pulled from the child's Box via the
-   mastery engine, 10 per session. Wrong answers get an AI Tutor hint
-   (same contract as al-idrisi-games' /api/generate-hint — silently
-   hidden on any failure, never blocks moving on).
+   mastery engine, 10 per session. Wrong answers get a hint from Bo, the
+   app's mascot (same contract as al-idrisi-games' /api/generate-hint —
+   silently hidden on any failure, never blocks moving on).
    ================================================================= */
 (function () {
   const SESSION_LENGTH = 10;
@@ -17,7 +17,7 @@
     function renderQuestion() {
       const picked = window.BRAINBOX_MASTERY.pickNextQuestion(boxTopicIds, topicsById, statsCache, shownIds);
       if (!picked) {
-        container.innerHTML = `<div class="sc-panel">Box kosong — tambahkan topik dulu.</div>`;
+        container.innerHTML = `<div class="sc-panel">Box is empty — add some topics first.</div>`;
         return;
       }
       shownIds.add(picked.question.id);
@@ -76,7 +76,7 @@
       hintEl.innerHTML = `
         <div class="bb-ai-row">
           <img class="bb-ai-avatar" src="icons/ai-avatar.png" alt="" />
-          <span class="bb-ai-thinking-label">AI Tutor is thinking</span>
+          <span class="bb-ai-thinking-label">Bo is thinking ✨</span>
           <span class="bb-ai-thinking-dots"><span></span><span></span><span></span></span>
         </div>
       `;
@@ -84,7 +84,7 @@
     }
 
     async function fetchHint(question, topic, chosen, hintEl) {
-      showThinking(hintEl); // visible right away — the AI Tutor "arrives" before its answer does
+      showThinking(hintEl); // visible right away — Bo "arrives" before the answer does
       // Usage-tracking beacon — fired exactly here, alongside the real
       // Anthropic call below, per the "user main brain-box" = "submitted a
       // prompt" definition (not page views). Fire-and-forget, never blocks
@@ -115,7 +115,7 @@
         avatar.alt = "";
         const label = document.createElement("span");
         label.className = "bb-practice-hint-label";
-        label.textContent = "AI Tutor";
+        label.textContent = "Bo ✨";
         row.appendChild(avatar);
         row.appendChild(label);
         const body = document.createElement("div");
