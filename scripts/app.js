@@ -49,7 +49,15 @@
         const child = mode === "signup"
           ? await window.BRAINBOX_ROSTER.signUpChild(db, name, pin)
           : await window.BRAINBOX_ROSTER.signInChild(db, name, pin);
-        await enterMenu(child);
+        // Brand-new account, empty Box — skip straight to topic picking
+        // instead of landing on the 3-card menu, which kids had no way
+        // of knowing the order of (Choose Subject has to come first).
+        if ((child.box || []).length === 0) {
+          activeChild = child;
+          enterBoxScreen();
+        } else {
+          await enterMenu(child);
+        }
       } catch (e) {
         showError(errEl, e.message);
       }
@@ -102,13 +110,48 @@
     $("bb-menu-name").textContent = child.name;
     $("bb-menu-box-count").textContent = `${(child.box || []).length} / ${window.BRAINBOX_BOX.MAX_BOX_TOPICS} topics in the Box`;
     renderGreeting(child.name);
+    updateMenuLockState();
     showScreen("bb-screen-menu");
+  }
+
+  // Practice/Drive Mode are locked (grayed out, tap does nothing but
+  // shake) until the Box has at least 1 topic — kids were tapping the 3
+  // cards in random order with no idea Box comes first. The Box card
+  // itself pulses in that state as a "start here" cue.
+  function updateMenuLockState() {
+    const boxEmpty = (activeChild.box || []).length === 0;
+    const practiceBtn = $("bb-menu-practice-btn");
+    const driveBtn = $("bb-menu-drive-btn");
+    const boxBtn = $("bb-menu-box-btn");
+    practiceBtn.classList.toggle("sc-locked", boxEmpty);
+    driveBtn.classList.toggle("sc-locked", boxEmpty);
+    boxBtn.classList.toggle("sc-highlight", boxEmpty);
+    practiceBtn.querySelector(".sc-game-sub").textContent = boxEmpty
+      ? "🔒 Pilih topik dulu ya!"
+      : "10 mixed questions";
+    driveBtn.querySelector(".sc-game-sub").textContent = boxEmpty
+      ? "🔒 Pilih topik dulu ya!"
+      : "Outrun the dino, answer to score";
+  }
+
+  function nudgeToBoxCard() {
+    const boxBtn = $("bb-menu-box-btn");
+    boxBtn.classList.remove("sc-shake");
+    void boxBtn.offsetWidth; // restart the animation if it's already mid-shake
+    boxBtn.classList.add("sc-shake");
+    boxBtn.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function wireMenuScreen() {
     $("bb-menu-box-btn").onclick = () => enterBoxScreen();
-    $("bb-menu-practice-btn").onclick = () => enterPracticeScreen();
-    $("bb-menu-drive-btn").onclick = () => enterDriveScreen();
+    $("bb-menu-practice-btn").onclick = () => {
+      if ((activeChild.box || []).length === 0) return nudgeToBoxCard();
+      enterPracticeScreen();
+    };
+    $("bb-menu-drive-btn").onclick = () => {
+      if ((activeChild.box || []).length === 0) return nudgeToBoxCard();
+      enterDriveScreen();
+    };
     $("bb-menu-logout").onclick = () => {
       window.BRAINBOX_ROSTER.clearChild();
       activeChild = null;

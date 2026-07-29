@@ -230,6 +230,25 @@ button.sc-game-card:active { transform: scale(0.98); }
 .sc-game-card.lang .sc-game-title { color: #8c2f6b; } .sc-game-card.lang .sc-game-sub { color: #9b5d84; }
 .sc-game-card.solar .sc-game-title { color: #3f7a4e; } .sc-game-card.solar .sc-game-sub { color: #5d9268; }
 
+/* ---- First-run guidance: Practice/Drive Mode are locked until the Box
+   has at least 1 topic, and the Box card itself pulses to say "start
+   here" — kids were tapping the 3 menu cards in random order with no
+   idea Box comes first. ---- */
+.sc-game-card.sc-locked { opacity: 0.5; filter: grayscale(0.4); cursor: not-allowed; }
+.sc-game-card.sc-locked:hover, .sc-game-card.sc-locked:focus-visible { transform: none; }
+.sc-game-card.sc-locked .sc-game-sub { font-weight: 700; }
+.sc-game-card.sc-shake { animation: sc-card-shake 0.4s ease-in-out; }
+@keyframes sc-card-shake {
+  0%, 100% { transform: translateX(0) rotate(0.6deg); }
+  25%      { transform: translateX(-6px) rotate(0.6deg); }
+  75%      { transform: translateX(6px) rotate(0.6deg); }
+}
+.sc-game-card.sc-highlight { animation: sc-card-glow 1.4s ease-in-out infinite; }
+@keyframes sc-card-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 76, 140, 0.35); }
+  50%      { box-shadow: 0 0 0 10px rgba(47, 76, 140, 0); }
+}
+
 .sc-greeting {
   margin: 30px 0 1.5rem; padding: 0.25rem 1.1rem; font-family: "Baloo 2", sans-serif;
   font-size: 0.95rem; font-weight: 600; color: #8a6d3a; text-align: center; position: relative; z-index: 1;
