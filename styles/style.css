@@ -467,8 +467,13 @@ button.sc-game-card:active { transform: scale(0.98); }
   width: 60px;
   height: 60px;
   z-index: 2;
-  pointer-events: none;
   animation: bb-landing-dino-walk 9s linear infinite;
+  /* Reset button defaults — this is a tap target now (opens DinoRace),
+     not just decoration, but must look/move exactly like it did before. */
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
 }
 .bb-landing-dino {
   display: block;

@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>DinoRace 🦕 — 2-Player Dino Racing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4fbde9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="DinoRace">
+<style>
+  /* ===== COLORFUL (default, comical buat anak-anak) ===== */
+  :root, :root[data-theme="colorful"]{
+    --brand: #ff8c42;
+    --brand-dark: #f4611f;
+    --bg-start: #4fbde9;
+    --bg-end: #8fd14f;
+    --p1: #2f9fd6;
+    --p2: #e8544f;
+    --panel: #fffdf3;
+    --panel2: #fff0cf;
+    --text: #3a3550;
+    --muted: #8a86a0;
+    --ground: #6b4a2f;
+    --border: #ffdf9e;
+    --card-shadow: rgba(47,159,214,0.28);
+    --lane1-a: #4aa6db; --lane1-b: #3b8ec2; --lane1-tag: #ffffff;
+    --lane2-a: #94c94f; --lane2-b: #7cb23c; --lane2-tag: #ffffff;
+    --lane3-a: #c77edb; --lane3-b: #a95bc4; --lane3-tag: #ffffff;
+    --primary-grad: linear-gradient(135deg, #ffb03a, #ff6f5e);
+    --danger: #e11d48;
+    --danger-bg: #ffe1e1;
+    --danger-border: #ff9c9c;
+  }
+  /* ===== LIGHT (pastel kalem) ===== */
+  :root[data-theme="light"]{
+    --brand: #818cf8;
+    --brand-dark: #6366f1;
+    --bg-start: #a5b4fc;
+    --bg-end: #fbcfe8;
+    --p1: #38bdf8;
+    --p2: #fb7185;
+    --panel: #ffffff;
+    --panel2: #f4f2ff;
+    --text: #4c4869;
+    --muted: #9891b8;
+    --ground: #c7d2fe;
+    --border: #ece9fb;
+    --card-shadow: rgba(129,140,248,0.25);
+    --lane1-a: #e0f2fe; --lane1-b: #dbeafe; --lane1-tag: #0284c7;
+    --lane2-a: #fdf2f8; --lane2-b: #fce7f3; --lane2-tag: #e11d48;
+    --lane3-a: #f3e8ff; --lane3-b: #e9d5ff; --lane3-tag: #9333ea;
+    --primary-grad: linear-gradient(135deg, #818cf8, #f0a6ca);
+    --danger: #e11d48;
+    --danger-bg: #fee2e2;
+    --danger-border: #fca5a5;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+    background-attachment: fixed;
+    color: var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow-x:hidden;
+  }
+  .app{
+    width:100%;
+    max-width:720px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding: 16px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin: 6px 0 18px;
+    position:relative;
+  }
+  .theme-toggle{
+    position:absolute;
+    right:0;
+    top:50%;
+    transform: translateY(-50%);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 19px;
+    cursor:pointer;
+    box-shadow: 0 4px 12px var(--card-shadow);
+    transition: transform .12s ease;
+    line-height:1;
+  }
+  .theme-toggle:active{ transform: translateY(-50%) scale(0.9); }
+  .brand h1{
+    font-size: 26px;
+    margin:0;
+    letter-spacing: -0.5px;
+  }
+  .brand .dot{
+    color: var(--brand);
+  }
+  .screen{
+    display:none;
+    flex-direction:column;
+    gap:16px;
+    flex:1;
+  }
+  .screen.active{ display:flex; }
+
+  /* ---------- Home ---------- */
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 10px 30px var(--card-shadow);
+  }
+  .card h2{ margin: 0 0 6px; font-size: 18px; }
+  .card p.sub{ margin: 0 0 14px; color: var(--muted); font-size: 13.5px; line-height:1.5;}
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor:pointer;
+    transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+    width:100%;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn-primary{ background: var(--primary-grad); color:white; box-shadow: 0 6px 18px var(--card-shadow); }
+  .btn-primary:hover{ filter:brightness(1.05); }
+  .btn-secondary{ background: var(--panel2); color: var(--brand-dark); border:1px solid var(--border); }
+  .btn-secondary:hover{ filter:brightness(0.97); }
+  .btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .btn-wa{ background:#25D366; color:#fff; box-shadow: 0 6px 18px rgba(37,211,102,0.35); margin-bottom:4px; }
+  .btn-wa:hover{ filter:brightness(1.08); }
+  .player-count-picker{
+    display:flex;
+    gap:8px;
+    margin-bottom: 12px;
+  }
+  .pc-choice{
+    flex:1;
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    cursor:pointer;
+  }
+  .pc-choice.selected{
+    border-color: var(--brand);
+    background: var(--panel);
+    box-shadow: 0 0 0 2px var(--brand) inset;
+  }
+  .died-tag{
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:4px;
+    color:#ff3b30;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    background: rgba(255,59,48,0.10);
+    z-index:6;
+    pointer-events:none;
+  }
+  .died-tag.show{ display:flex; }
+  .spectate-banner{
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ flex:1; }
+
+  input.code-input{
+    width:100%;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 26px;
+    letter-spacing: 8px;
+    text-align:center;
+    text-transform: uppercase;
+    padding: 14px 10px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  input.code-input:focus{ outline:none; border-color: var(--brand); }
+
+  .code-display{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    background: var(--panel2);
+    border: 2px dashed var(--brand);
+    border-radius: 16px;
+    padding: 18px;
+    margin: 10px 0;
+  }
+  .code-display .code{
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 10px;
+    color: var(--brand-dark);
+  }
+  .copy-btn{
+    background: var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .waiting-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  .qr-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    margin: 4px 0 12px;
+  }
+  #qrBox{
+    background:#fff;
+    padding:12px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    box-shadow: 0 4px 14px var(--card-shadow);
+    line-height:0;
+  }
+  #qrBox img{ display:block; width:150px; height:150px; image-rendering: pixelated; }
+  .qr-label{ font-size:12.5px; color:var(--muted); font-weight:600; }
+  .spinner{
+    width:16px; height:16px;
+    border-radius:50%;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--brand);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .status-msg{
+    text-align:center;
+    font-size: 13px;
+    color: #ef4444;
+    min-height: 18px;
+    margin-top: 6px;
+  }
+
+  .leaderboard{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 20px var(--card-shadow);
+  }
+  .leaderboard .lbl{ color:var(--muted); font-size:12.5px; }
+  .leaderboard .val{ font-size:20px; font-weight:800; color: var(--brand-dark); }
+
+  /* ---------- Game ---------- */
+  #gameScreen{ padding:0; gap:10px; }
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding: 4px 2px;
+  }
+  .hud-box{
+    flex:1;
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 14px var(--card-shadow);
+  }
+  .hud-box.me{ border-color: var(--brand); box-shadow: 0 4px 14px var(--card-shadow); }
+  .hud-box .name{ font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .hud-box .dist{ font-size: 19px; font-weight:800; }
+  .hud-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-width: 70px;
+  }
+  .hud-center .timer{ font-size:12px; color:var(--muted); }
+  .hud-center .diff{ font-size:11px; font-weight:700; color: var(--brand); }
+
+  .track-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    border-radius: 20px;
+    overflow:hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px var(--card-shadow);
+    background: var(--panel);
+  }
+  .lane{
+    position:relative;
+    height: 160px;
+    overflow:hidden;
+    border-bottom: 3px solid var(--ground);
+  }
+  .lane.p1{ background: linear-gradient(180deg, var(--lane1-a) 0%, var(--lane1-b) 100%); }
+  .lane.p2{ background: linear-gradient(180deg, var(--lane2-a) 0%, var(--lane2-b) 100%); }
+  .lane.p3{ background: linear-gradient(180deg, var(--lane3-a) 0%, var(--lane3-b) 100%); }
+  .lane:last-child{ border-bottom:none; }
+  .lane .lane-tag{
+    position:absolute;
+    top:6px; left:8px;
+    font-size:10px;
+    font-weight:800;
+    color: var(--muted);
+    background: rgba(255,255,255,0.7);
+    padding:2px 8px;
+    border-radius: 20px;
+    z-index:5;
+    letter-spacing:0.5px;
+  }
+  .lane.p1 .lane-tag{ color: var(--lane1-tag); }
+  .lane.p2 .lane-tag{ color: var(--lane2-tag); }
+  .lane.p3 .lane-tag{ color: var(--lane3-tag); }
+  .track-wrap.lanes-3 .lane{ height: 108px; }
+  .track-wrap.lanes-1 .lane{ height: 240px; }
+  .lane .ground-line{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--ground) 0 20px, transparent 20px 36px);
+    animation: scroll-line 0.6s linear infinite;
+  }
+  @keyframes scroll-line{ from{ background-position-x:0; } to{ background-position-x:-36px; } }
+
+  .dino{
+    position:absolute;
+    bottom: 4px;
+    font-size: 44px;
+    line-height:1;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.4));
+    transition: left 0.09s linear;
+    will-change: left, bottom, transform;
+    z-index: 4;
+  }
+  .dino.dead{ filter: grayscale(1) drop-shadow(0 4px 4px rgba(0,0,0,0.4)); opacity:0.55; }
+  .dino.flip{ transform: scaleX(-1); }
+  .dino.blink{ animation: blink 0.16s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity: 0.25; } }
+
+  .hearts{
+    position:absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 13px;
+    line-height:1;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    z-index: 5;
+    pointer-events:none;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35));
+  }
+
+  /* ---------- Pilih Dino ---------- */
+  .dino-picker{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin: 6px 0 14px;
+  }
+  .dino-choice{
+    width: 60px;
+    height: 60px;
+    font-size: 34px;
+    line-height:1;
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    cursor:pointer;
+    transition: transform .1s ease, border-color .1s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .dino-choice:active{ transform: scale(0.92); }
+  .dino-choice.selected{
+    border-color: var(--brand);
+    background: var(--panel);
+    box-shadow: 0 0 0 3px var(--brand) inset, 0 6px 16px var(--card-shadow);
+    transform: scale(1.06);
+  }
+  .pick-info{ font-size: 14px; color: var(--muted); font-weight:600; }
+  .pick-info span{ font-size: 20px; }
+
+  .obstacle{
+    position:absolute;
+    bottom: 4px;
+    font-size: 21.6px;
+    line-height:1;
+    will-change: left;
+    z-index:3;
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35));
+  }
+  .obstacle.bird{ font-size: 19.2px; }
+
+  .controls{
+    display:flex;
+    gap:10px;
+    padding: 2px;
+  }
+  .ctrl-btn{
+    flex:1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 14px var(--card-shadow);
+    border-radius: 16px;
+    padding: 16px 0;
+    font-size: 22px;
+    color: var(--text);
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    touch-action: manipulation;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ctrl-btn:active{ background: var(--brand); border-color: var(--brand); color: #fff; }
+  .ctrl-jump{ flex:1.4; font-weight:800; font-size:14px; letter-spacing:0.5px; }
+
+  /* ---------- Game Over ---------- */
+  .go-card{ text-align:center; }
+  .go-card h2{ font-size: 22px; margin-bottom: 4px; }
+  .go-card .trophy{ font-size: 50px; margin: 6px 0; }
+  .go-results{
+    display:flex;
+    gap:10px;
+    margin: 16px 0;
+  }
+  .go-result{
+    flex:1;
+    background: var(--panel2);
+    border-radius: 16px;
+    padding: 14px 8px;
+    border: 1px solid var(--border);
+  }
+  .go-result.winner{ border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand) inset; }
+  .go-result .who{ font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .go-result .num{ font-size: 22px; font-weight:900; }
+  .go-badge{
+    display:inline-block;
+    margin-top:6px;
+    font-size:10px;
+    font-weight:800;
+    color: white;
+    background: var(--brand);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .best-line{
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .toast{
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel);
+    box-shadow: 0 8px 24px var(--card-shadow);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    z-index: 50;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .25s ease;
+  }
+  .toast.show{ opacity:1; }
+
+  .footer-link{
+    text-align:center;
+    color: var(--muted);
+    font-size: 11.5px;
+    margin-top: auto;
+    padding: 14px 0 4px;
+  }
+  .footer-link b{ color: var(--brand-dark); }
+
+  @media (max-width: 380px){
+    .lane{ height: 140px; }
+    .dino{ font-size: 37px; }
+    .obstacle{ font-size: 19.2px; }
+    .track-wrap.lanes-3 .lane{ height: 96px; }
+    .track-wrap.lanes-1 .lane{ height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="brand">
+    <h1>🦕 DinoRace<span class="dot">.</span></h1>
+    <button class="theme-toggle" id="themeToggle" title="Ganti tema" aria-label="Ganti tema">🎨</button>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div class="screen active" id="homeScreen">
+    <div class="card">
+      <h2>🏃 Main Sendiri</h2>
+      <p class="sub">Latihan solo, ga perlu nunggu siapa-siapa. Langsung gas!</p>
+      <button class="btn btn-primary" id="soloGameBtn">Main Sekarang</button>
+    </div>
+
+    <div class="card">
+      <h2>Buat Game Baru</h2>
+      <p class="sub">Kamu jadi Player 1 🦕. Kami buatkan kode 6-karakter, share ke teman buat gabung.</p>
+      <div class="player-count-picker" id="playerCountPicker">
+        <button class="pc-choice selected" data-count="2">👥 2 Pemain</button>
+        <button class="pc-choice" data-count="3">👥👤 3 Pemain</button>
+      </div>
+      <button class="btn btn-secondary" id="createGameBtn">Buat Game</button>
+    </div>
+
+    <div class="card">
+      <h2>Gabung Game</h2>
+      <p class="sub">Punya kode dari teman? Masukkan di sini buat gabung.</p>
+      <input type="text" class="code-input" id="joinCodeInput" maxlength="6" placeholder="ABC123" autocomplete="off" autocapitalize="characters">
+      <button class="btn btn-secondary" id="joinGameBtn">Gabung</button>
+      <div class="status-msg" id="joinStatusMsg"></div>
+    </div>
+
+    <div class="leaderboard">
+      <div>
+        <div class="lbl">Best Distance Kamu</div>
+        <div class="val" id="bestScoreVal">0 m</div>
+      </div>
+      <div style="font-size:28px;">🏆</div>
+    </div>
+  </div>
+
+  <!-- WAITING SCREEN (host/joiner nunggu slot lain terisi) -->
+  <div class="screen" id="waitScreen">
+    <div class="card">
+      <h2>Kode Pairing</h2>
+      <p class="sub">Kirim kode ini ke teman supaya bisa gabung ke race.</p>
+      <div class="code-display">
+        <div class="code" id="pairCodeVal">------</div>
+        <button class="copy-btn" id="copyCodeBtn">Copy</button>
+      </div>
+      <div class="qr-wrap">
+        <div id="qrBox"></div>
+        <div class="qr-label">📷 Scan buat langsung gabung</div>
+      </div>
+      <button class="btn btn-wa" id="waShareBtn">📲 Share ke WhatsApp</button>
+      <div class="waiting-row"><div class="spinner"></div> <span id="waitingText">Menunggu pemain lain gabung...</span></div>
+    </div>
+    <button class="btn btn-secondary" id="cancelWaitBtn">Batal</button>
+  </div>
+
+  <!-- PILIH DINO SCREEN -->
+  <div class="screen" id="selectScreen">
+    <div class="card" style="text-align:center;">
+      <h2>Pilih Dino Kamu 🦖</h2>
+      <p class="sub">Tap dino favoritmu! Mulai otomatis dalam <b id="selectTimer">10</b> detik.</p>
+      <div class="dino-picker" id="dinoPicker"></div>
+      <div class="pick-info">Kamu: <span id="myPickEmoji">🦕</span></div>
+      <div class="pick-info" id="oppPicksRow"></div>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN OVERLAY SCREEN -->
+  <div class="screen" id="countdownScreen">
+    <div class="card" style="text-align:center; padding: 60px 20px;">
+      <div style="font-size:14px; color:var(--muted); margin-bottom:8px;">Balapan dimulai dalam</div>
+      <div id="countdownNum" style="font-size:72px; font-weight:900; color:var(--brand);">3</div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="screen" id="gameScreen">
+    <div class="spectate-banner" id="spectateBanner" style="display:none;">💀 Kamu game over — lawan masih lari! Nunggu dia selesai...</div>
+    <div class="hud">
+      <div class="hud-box" id="hudP1">
+        <div class="name"><span id="hudP1Emoji">🦕</span> <span id="hudP1Name">Player 1</span></div>
+        <div class="dist"><span id="distP1">0</span> m</div>
+      </div>
+      <div class="hud-center">
+        <div class="diff" id="diffLabel">EASY</div>
+        <div class="timer" id="timerLabel">0.0s</div>
+      </div>
+      <div class="hud-box" id="hudP2">
+        <div class="name"><span id="hudP2Emoji">🦖</span> <span id="hudP2Name">Player 2</span></div>
+        <div class="dist"><span id="distP2">0</span> m</div>
+      </div>
+      <div class="hud-box" id="hudP3" style="display:none;">
+        <div class="name"><span id="hudP3Emoji">🐉</span> <span id="hudP3Name">Player 3</span></div>
+        <div class="dist"><span id="distP3">0</span> m</div>
+      </div>
+    </div>
+
+    <div class="track-wrap" id="trackWrap">
+      <div class="lane p1" id="laneP1">
+        <div class="lane-tag">PLAYER 1</div>
+        <div class="ground-line"></div>
+      </div>
+      <div class="lane p2" id="laneP2">
+        <div class="lane-tag">PLAYER 2</div>
+        <div class="ground-line"></div>
+      </div>
+      <div class="lane p3" id="laneP3" style="display:none;">
+        <div class="lane-tag">PLAYER 3</div>
+        <div class="ground-line"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-btn" id="btnLeft">◀</div>
+      <div class="ctrl-btn ctrl-jump" id="btnJump">▲ JUMP</div>
+      <div class="ctrl-btn" id="btnRight">▶</div>
+    </div>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div class="screen" id="overScreen">
+    <div class="card go-card">
+      <div class="trophy" id="overTrophy">🏁</div>
+      <h2 id="overTitle">Game Over!</h2>
+      <p class="sub" id="overSubtitle">Hasil balapan</p>
+      <div class="go-results">
+        <div class="go-result" id="resultP1">
+          <div class="who"><span id="resultP1Emoji">🦕</span> <span id="resultP1Name">Player 1</span></div>
+          <div class="num" id="resultP1Val">0 m</div>
+        </div>
+        <div class="go-result" id="resultP2">
+          <div class="who"><span id="resultP2Emoji">🦖</span> <span id="resultP2Name">Player 2</span></div>
+          <div class="num" id="resultP2Val">0 m</div>
+        </div>
+        <div class="go-result" id="resultP3" style="display:none;">
+          <div class="who"><span id="resultP3Emoji">🐉</span> <span id="resultP3Name">Player 3</span></div>
+          <div class="num" id="resultP3Val">0 m</div>
+        </div>
+      </div>
+      <div class="best-line" id="bestLine"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="homeBtn">Menu Utama</button>
+      <button class="btn btn-primary" id="playAgainBtn">Main Lagi</button>
+    </div>
+  </div>
+
+  <div class="footer-link">Made with <b>Adit</b> · Powered by Firebase</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase (CDN, compat build for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ============================================================
+  // ISI DENGAN CONFIG DARI FIREBASE CONSOLE KAMU
+  // Project Settings > General > Your apps > SDK setup and configuration
+  // PENTING: Realtime Database harus di-enable (bukan Firestore),
+  // dan databaseURL wajib diisi (Build > Realtime Database).
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyDoeqepGbq4oaPQ2HcyJQvjAbs8prKx6no",
+    authDomain: "dinorace-d9b8c.firebaseapp.com",
+    databaseURL: "https://dinorace-d9b8c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dinorace-d9b8c",
+    storageBucket: "dinorace-d9b8c.firebasestorage.app",
+    messagingSenderId: "856706109617",
+    appId: "1:856706109617:web:700e9f868444471ecbd290"
+  };
+
+  let db = null;
+  let firebaseReady = false;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    firebaseReady = true;
+  } catch(err){
+    console.error("Firebase init error", err);
+  }
+
+  // ---------------- constants ----------------
+  const GAMES_ROOT = "dinorace_games";
+  const LANE_W_PADDING = 40; // px reserved for dino sprite width approx
+  const GROUND_BOTTOM = 4;
+  const JUMP_HEIGHT = 78;
+  const JUMP_DURATION = 520; // ms total up+down
+  const JUMP_FORWARD_PX = 54; // fixed px horizontal drift selama lompat, independen dari lebar lane
+  const MOVE_STEP = 8; // % of lane width per press
+  const DINO_MIN_LEFT = 2;
+  const DINO_MAX_LEFT = 70; // dino stays in left portion of lane, obstacles run at it
+  const OBSTACLE_TYPES = [
+    { type: "cactus", emoji: "🌵", w: 18 },
+    { type: "bird", emoji: "🐦", w: 16, flying: true },
+    { type: "batu", emoji: "🪨", w: 18 }
+  ];
+  const BASE_SPAWN_MS = 1350;
+  const MIN_SPAWN_MS = 480;
+  const SPAWN_RAMP_MS = 55000; // time to reach min spawn interval
+  const BASE_SPEED = 0.026; // % of lane width per ms
+  const MAX_SPEED = 0.052;
+  const SPEED_RAMP_MS = 70000;
+  const COUNTDOWN_SECONDS = 3;
+  const BEST_SCORE_KEY = "dinorace_best_score";
+  const STALE_MS_KICK = 15000; // remove obstacle after leaving screen
+  const LIVES_MAX = 5;                 // nyawa per dino
+  const INVINCIBLE_MS = 1200;          // kebal + kedip sesaat setelah nabrak
+  const SELECT_SECONDS = 10;           // waktu pilih dino
+  const DINO_OPTIONS = ["🦕", "🦖", "🐉", "🐊", "🦎"]; // 5 karakter dino
+  const SCHEDULE_DURATION_MS = 20 * 60 * 1000; // precompute obstacle timeline up to 20 min of play
+
+  // Deterministic PRNG so both players compute the identical obstacle
+  // timeline locally from a shared seed, instead of relying on one
+  // player's device staying foregrounded to broadcast spawns.
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function buildObstacleSchedule(seed, durationMs){
+    const rand = mulberry32(seed);
+    const schedule = [];
+    let t = BASE_SPAWN_MS * (0.75 + rand()*0.5);
+    while(t < durationMs){
+      const rampT = Math.min(1, t / SPAWN_RAMP_MS);
+      const meta = OBSTACLE_TYPES[Math.floor(rand() * OBSTACLE_TYPES.length)];
+      schedule.push({ time: t, type: meta.type });
+      let interval = BASE_SPAWN_MS - (BASE_SPAWN_MS - MIN_SPAWN_MS) * rampT;
+      interval *= (0.75 + rand()*0.5);
+      t += interval;
+    }
+    return schedule;
+  }
+
+  // ---------------- state ----------------
+  const ROLE_LIST = ["player1", "player2", "player3"];
+  const DEFAULT_NAME = { player1: "Player 1", player2: "Player 2", player3: "Player 3" };
+  let role = null; // 'player1' | 'player2' | 'player3'
+  let isSolo = false; // true = main sendiri, tanpa Firebase sama sekali
+  let playerCount = 2; // 1 (solo), 2, atau 3
+  let selectedPlayerCount = 2; // pilihan di home screen sebelum "Buat Game"
+  let roles = ["player1", "player2"]; // roles aktif di game ini (slice dari ROLE_LIST)
+  let otherRoles = ["player2"]; // roles selain aku
+  let gameCode = null;
+  let gameRef = null;
+  let myRef = null;
+  let unsubscribers = [];
+
+  let raf = null;
+  let running = false;
+  let startTime = 0;
+  let localObstacles = []; // {id, type, emoji, w, flying, spawnAt, lane:'shared'}
+  let obstacleSchedule = [];
+  let nextScheduleIdx = 0;
+  let listenersAttached = false;
+  let controlsBound = false;
+  let currentRound = 0;
+  let countingDown = false;
+  let selecting = false;
+  let dinos = { player1: "🦕", player2: "🦖", player3: "🐉" }; // dino terpilih tiap role
+
+  function freshPlayerState(){
+    return {
+      leftPct: DINO_MIN_LEFT + 6,
+      jumping: false,
+      jumpStart: 0,
+      dead: false,
+      distance: 0,
+      lives: LIVES_MAX,
+      invincibleUntil: 0, // dipakai buat "myState" (kebal lokal)
+      blinkUntil: 0,      // dipakai buat remoteStates (efek kedip visual)
+      connected: false
+    };
+  }
+
+  let myState = freshPlayerState();
+  let remoteStates = {}; // role -> state (untuk otherRoles saja)
+  let lastDistWriteAt = 0;
+  let finished = false;
+
+  // ---------------- DOM ----------------
+  const screens = {
+    home: document.getElementById("homeScreen"),
+    wait: document.getElementById("waitScreen"),
+    select: document.getElementById("selectScreen"),
+    countdown: document.getElementById("countdownScreen"),
+    game: document.getElementById("gameScreen"),
+    over: document.getElementById("overScreen"),
+  };
+  function showScreen(name){
+    Object.values(screens).forEach(s => s.classList.remove("active"));
+    screens[name].classList.add("active");
+  }
+
+  const toastEl = document.getElementById("toast");
+  function toast(msg, ms=2400){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> toastEl.classList.remove("show"), ms);
+  }
+
+  function randomCode(){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars
+    let out = "";
+    for(let i=0;i<6;i++) out += chars[Math.floor(Math.random()*chars.length)];
+    return out;
+  }
+
+  function requireFirebase(){
+    if(!firebaseReady){
+      toast("Firebase belum dikonfigurasi. Isi firebaseConfig di index.html.", 4000);
+      return false;
+    }
+    return true;
+  }
+
+  // ---------------- best score (localStorage) ----------------
+  function getBestScore(){
+    return parseInt(localStorage.getItem(BEST_SCORE_KEY) || "0", 10);
+  }
+  function setBestScoreIfHigher(v){
+    const cur = getBestScore();
+    if(v > cur){
+      localStorage.setItem(BEST_SCORE_KEY, String(Math.round(v)));
+      return true;
+    }
+    return false;
+  }
+  function refreshBestScoreUI(){
+    document.getElementById("bestScoreVal").textContent = getBestScore() + " m";
+  }
+  refreshBestScoreUI();
+
+  // ---------------- theme (colorful default / light) ----------------
+  const THEME_KEY = "dinorace_theme";
+  function applyTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    const btn = document.getElementById("themeToggle");
+    if(btn) btn.textContent = theme === "light" ? "☀️" : "🎨";
+  }
+  function loadTheme(){
+    return localStorage.getItem(THEME_KEY) || "colorful";
+  }
+  applyTheme(loadTheme());
+  document.getElementById("themeToggle").addEventListener("click", ()=>{
+    const next = loadTheme() === "colorful" ? "light" : "colorful";
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+    toast(next === "light" ? "Mode Pastel ☀️" : "Mode Colorful 🎨");
+  });
+
+  // Auto-join dari QR / link (?join=CODE) — scan langsung masuk game
+  const joinParam = new URLSearchParams(location.search).get("join");
+  if(joinParam && /^[A-Z0-9]{6}$/i.test(joinParam)){
+    document.getElementById("joinCodeInput").value = joinParam.toUpperCase();
+    history.replaceState(null, "", location.pathname); // bersihin URL biar refresh ga re-join
+    setTimeout(()=> joinGame(), 300);
+  }
+
+  // ============================================================
+  // HOME SCREEN ACTIONS
+  // ============================================================
+  document.getElementById("createGameBtn").addEventListener("click", createGame);
+  document.getElementById("joinGameBtn").addEventListener("click", joinGame);
+  document.getElementById("soloGameBtn").addEventListener("click", startSoloGame);
+  document.querySelectorAll("#playerCountPicker .pc-choice").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      selectedPlayerCount = parseInt(btn.dataset.count, 10);
+      document.querySelectorAll("#playerCountPicker .pc-choice").forEach(b=> b.classList.remove("selected"));
+      btn.classList.add("selected");
+    });
+  });
+  document.getElementById("joinCodeInput").addEventListener("input", (e)=>{
+    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6);
+  });
+  document.getElementById("joinCodeInput").addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") joinGame();
+  });
+  document.getElementById("copyCodeBtn").addEventListener("click", ()=>{
+    if(gameCode){
+      navigator.clipboard?.writeText(gameCode).then(()=> toast("Kode disalin!")).catch(()=>{});
+    }
+  });
+  document.getElementById("waShareBtn").addEventListener("click", ()=>{
+    if(!gameCode) return;
+    const joinUrl = joinUrlFor(gameCode);
+    const msg = `Main DinoRace yuk! 🦕🏁\nTap link ini buat langsung gabung:\n${joinUrl}\n\n(atau masukin kode ${gameCode} manual di "Gabung Game")`;
+    const waUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
+    // window.open(..., "_blank") sering diblokir Safari iOS / mode standalone (PWA di-add ke Home Screen)
+    // tanpa error apa pun — navigasi tab yang sama lebih reliable lintas platform buat deep link wa.me
+    location.href = waUrl;
+  });
+
+  function joinUrlFor(code){
+    return location.origin + location.pathname + "?join=" + code;
+  }
+
+  function renderJoinQR(code){
+    const box = document.getElementById("qrBox");
+    if(!box) return;
+    try {
+      const qr = qrcode(0, "M");
+      qr.addData(joinUrlFor(code));
+      qr.make();
+      box.innerHTML = qr.createImgTag(5, 0);
+      box.parentElement.style.display = "flex";
+    } catch(err){
+      // library QR gagal load (offline dll) — sembunyikan, kode + WA tetap jalan
+      if(box.parentElement) box.parentElement.style.display = "none";
+    }
+  }
+  document.getElementById("cancelWaitBtn").addEventListener("click", ()=>{
+    cleanupGame(true);
+    showScreen("home");
+  });
+  document.getElementById("homeBtn").addEventListener("click", ()=>{
+    cleanupGame(true);
+    showScreen("home");
+    refreshBestScoreUI();
+  });
+  document.getElementById("playAgainBtn").addEventListener("click", ()=>{
+    const btn = document.getElementById("playAgainBtn");
+    if(isSolo){
+      beginCountdownAndStart(); // solo: langsung ulang, ga perlu Firebase apa pun
+      return;
+    }
+    if(gameRef && role){
+      btn.disabled = true;
+      btn.textContent = "⏳ Mulai ronde baru...";
+      gameRef.child("rematch/" + role).set(true).catch(()=>{
+        btn.disabled = false;
+        btn.textContent = "Main Lagi";
+        toast("Gagal minta rematch, coba lagi.");
+      });
+    } else {
+      toast("Lawan sudah keluar. Bikin game baru ya.");
+      cleanupGame(true);
+      showScreen("home");
+      refreshBestScoreUI();
+    }
+  });
+
+  async function createGame(){
+    if(!requireFirebase()) return;
+    const btn = document.getElementById("createGameBtn");
+    btn.disabled = true;
+    try {
+      let code;
+      let attempts = 0;
+      // ensure uniqueness (best-effort)
+      while(attempts < 5){
+        code = randomCode();
+        const snap = await db.ref(`${GAMES_ROOT}/${code}`).get();
+        if(!snap.exists()) break;
+        attempts++;
+      }
+      gameCode = code;
+      role = "player1";
+      isSolo = false;
+      playerCount = selectedPlayerCount;
+      roles = ROLE_LIST.slice(0, playerCount);
+      otherRoles = roles.filter(r=> r !== role);
+      gameRef = db.ref(`${GAMES_ROOT}/${gameCode}`);
+
+      const initialData = {
+        status: "waiting",
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        playerCount: playerCount,
+        seed: Math.floor(Math.random()*1e9),
+        round: 0,
+        rematch: {}
+      };
+      roles.forEach((r, i)=>{
+        initialData[r] = {
+          connected: r === "player1",
+          leftPct: DINO_MIN_LEFT+6, jumping:false, dead:false, distance:0,
+          lives: LIVES_MAX, dino: DINO_OPTIONS[i % DINO_OPTIONS.length]
+        };
+        initialData.rematch[r] = false;
+      });
+      await gameRef.set(initialData);
+      await gameRef.onDisconnect().update({ "player1/connected": false });
+
+      document.getElementById("pairCodeVal").textContent = gameCode;
+      renderJoinQR(gameCode);
+      showWaitingRoom();
+    } catch(err){
+      console.error(err);
+      toast("Gagal membuat game. Cek koneksi/konfigurasi Firebase.");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function showWaitingRoom(){
+    showScreen("wait");
+    listenForGameStart();
+    listenRoomFill();
+  }
+
+  function listenForGameStart(){
+    const statusHandler = gameRef.child("status").on("value", (snap)=>{
+      const status = snap.val();
+      if(status === "playing" && !running && !selecting && !countingDown){
+        gameRef.child("status").off("value", statusHandler);
+        beginSelection();
+      }
+    });
+    unsubscribers.push(()=> gameRef.child("status").off("value", statusHandler));
+  }
+
+  function listenRoomFill(){
+    const handler = gameRef.on("value", (snap)=>{
+      const d = snap.val();
+      if(!d) return;
+      const total = d.playerCount || playerCount;
+      const connectedCount = ROLE_LIST.slice(0, total).filter(r => d[r] && d[r].connected).length;
+      const need = total - connectedCount;
+      const waitingTextEl = document.getElementById("waitingText");
+      if(waitingTextEl){
+        waitingTextEl.textContent = need > 0
+          ? `Menunggu ${need} pemain lagi... (${connectedCount}/${total})`
+          : "Semua pemain sudah gabung!";
+      }
+    });
+    unsubscribers.push(()=> gameRef.off("value", handler));
+  }
+
+  async function joinGame(){
+    if(!requireFirebase()) return;
+    const input = document.getElementById("joinCodeInput");
+    const code = input.value.trim().toUpperCase();
+    const statusMsg = document.getElementById("joinStatusMsg");
+    statusMsg.textContent = "";
+    if(code.length !== 6){
+      statusMsg.textContent = "Kode harus 6 karakter.";
+      return;
+    }
+    const btn = document.getElementById("joinGameBtn");
+    btn.disabled = true;
+    try {
+      const ref = db.ref(`${GAMES_ROOT}/${code}`);
+      const snap = await ref.get();
+      if(!snap.exists()){
+        statusMsg.textContent = "Kode tidak ditemukan.";
+        return;
+      }
+      const data = snap.val();
+      if(data.status && data.status !== "waiting"){
+        statusMsg.textContent = "Game ini sudah dimulai atau selesai.";
+        return;
+      }
+      const totalPlayers = data.playerCount || 2;
+      const allRoles = ROLE_LIST.slice(0, totalPlayers);
+      let openRole = null;
+      for(const r of allRoles.slice(1)){ // player1 selalu host, ga pernah dicari di sini
+        if(!data[r] || !data[r].connected){ openRole = r; break; }
+      }
+      if(!openRole){
+        statusMsg.textContent = "Game sudah penuh.";
+        return;
+      }
+
+      gameCode = code;
+      role = openRole;
+      isSolo = false;
+      playerCount = totalPlayers;
+      roles = allRoles;
+      otherRoles = roles.filter(r=> r !== role);
+      gameRef = ref;
+
+      await gameRef.update({
+        [`${role}/connected`]: true,
+        [`${role}/leftPct`]: DINO_MIN_LEFT+6,
+        [`${role}/jumping`]: false,
+        [`${role}/dead`]: false,
+        [`${role}/distance`]: 0,
+        [`rematch/${role}`]: false
+      });
+      await gameRef.onDisconnect().update({ [`${role}/connected`]: false });
+
+      // kalau join ini yang bikin room penuh, nyalain status "playing"
+      const freshSnap = await gameRef.get();
+      const freshData = freshSnap.val() || {};
+      const allConnected = roles.every(r => freshData[r] && freshData[r].connected);
+      if(allConnected){
+        await gameRef.update({ status: "playing" });
+      }
+
+      document.getElementById("pairCodeVal").textContent = gameCode;
+      renderJoinQR(gameCode);
+      if(allConnected){
+        beginSelection();
+      } else {
+        showWaitingRoom(); // masih nunggu 1 pemain lagi (mode 3 pemain)
+      }
+    } catch(err){
+      console.error(err);
+      statusMsg.textContent = "Gagal gabung. Coba lagi.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ============================================================
+  // MAIN SENDIRI (solo) — tanpa Firebase sama sekali
+  // ============================================================
+  function startSoloGame(){
+    isSolo = true;
+    role = "player1";
+    gameCode = null;
+    gameRef = null;
+    playerCount = 1;
+    roles = ["player1"];
+    otherRoles = [];
+    dinos.player1 = dinos.player1 || "🦕";
+    beginCountdownAndStart();
+  }
+
+  // ============================================================
+  // PILIH DINO (10 detik) → lalu countdown
+  // ============================================================
+  function shortName(r){ return "P" + r.slice(-1); } // "player2" -> "P2"
+
+  function beginSelection(){
+    if(selecting || running || countingDown) return;
+    selecting = true;
+
+    let myPick = dinos[role];
+    myRef = gameRef.child(role);
+    myRef.child("dino").set(myPick).catch(()=>{});
+
+    const picker = document.getElementById("dinoPicker");
+    picker.innerHTML = "";
+    const myPickEmojiEl = document.getElementById("myPickEmoji");
+    const oppPicksRow = document.getElementById("oppPicksRow");
+    myPickEmojiEl.textContent = myPick;
+
+    // baris live nampilin pilihan tiap lawan (0, 1, atau 2 lawan)
+    oppPicksRow.innerHTML = "";
+    const oppPickEls = {};
+    otherRoles.forEach(r=>{
+      const span = document.createElement("span");
+      span.style.marginRight = "10px";
+      span.textContent = `${shortName(r)}: ❓`;
+      oppPicksRow.appendChild(span);
+      oppPickEls[r] = span;
+    });
+
+    DINO_OPTIONS.forEach(emoji=>{
+      const b = document.createElement("button");
+      b.className = "dino-choice" + (emoji === myPick ? " selected" : "");
+      b.textContent = emoji;
+      b.addEventListener("click", ()=>{
+        myPick = emoji;
+        myPickEmojiEl.textContent = emoji;
+        picker.querySelectorAll(".dino-choice").forEach(c=> c.classList.remove("selected"));
+        b.classList.add("selected");
+        myRef.child("dino").set(emoji).catch(()=>{});
+      });
+      picker.appendChild(b);
+    });
+
+    // lihat pilihan tiap lawan secara live
+    const oppDinoWatchers = otherRoles.map(r=>{
+      const ref = gameRef.child(r).child("dino");
+      const handler = ref.on("value", (snap)=>{
+        const v = snap.val();
+        if(v && oppPickEls[r]) oppPickEls[r].textContent = `${shortName(r)}: ${v}`;
+      });
+      return { ref, handler };
+    });
+    oppDinoWatchers.forEach(({ref, handler})=>{
+      unsubscribers.push(()=> ref.off("value", handler));
+    });
+
+    showScreen("select");
+    let n = SELECT_SECONDS;
+    const timerEl = document.getElementById("selectTimer");
+    timerEl.textContent = n;
+    const iv = setInterval(()=>{
+      n--;
+      timerEl.textContent = Math.max(0, n);
+      if(n <= 0){
+        clearInterval(iv);
+        oppDinoWatchers.forEach(({ref, handler})=> ref.off("value", handler));
+        selecting = false;
+        beginCountdownAndStart();
+      }
+    }, 1000);
+  }
+
+  // ============================================================
+  // COUNTDOWN + START
+  // ============================================================
+  function beginCountdownAndStart(){
+    if(countingDown || running) return;
+    countingDown = true;
+    const btn = document.getElementById("playAgainBtn");
+    btn.disabled = false;
+    btn.textContent = "Main Lagi";
+    showScreen("countdown");
+    let n = COUNTDOWN_SECONDS;
+    const numEl = document.getElementById("countdownNum");
+    numEl.textContent = n;
+    const iv = setInterval(()=>{
+      n--;
+      if(n <= 0){
+        clearInterval(iv);
+        numEl.textContent = "GO!";
+        setTimeout(()=>{ countingDown = false; startGame(); }, 350);
+      } else {
+        numEl.textContent = n;
+      }
+    }, 800);
+  }
+
+  // ============================================================
+  // GAME LOGIC
+  // ============================================================
+  const ROLE_META = {
+    player1: {
+      laneEl: document.getElementById("laneP1"), hudEl: document.getElementById("hudP1"),
+      hudNameEl: document.getElementById("hudP1Name"), hudEmojiEl: document.getElementById("hudP1Emoji"),
+      distEl: document.getElementById("distP1"),
+      resultEl: document.getElementById("resultP1"), resultValEl: document.getElementById("resultP1Val"),
+      resultNameEl: document.getElementById("resultP1Name"), resultEmojiEl: document.getElementById("resultP1Emoji")
+    },
+    player2: {
+      laneEl: document.getElementById("laneP2"), hudEl: document.getElementById("hudP2"),
+      hudNameEl: document.getElementById("hudP2Name"), hudEmojiEl: document.getElementById("hudP2Emoji"),
+      distEl: document.getElementById("distP2"),
+      resultEl: document.getElementById("resultP2"), resultValEl: document.getElementById("resultP2Val"),
+      resultNameEl: document.getElementById("resultP2Name"), resultEmojiEl: document.getElementById("resultP2Emoji")
+    },
+    player3: {
+      laneEl: document.getElementById("laneP3"), hudEl: document.getElementById("hudP3"),
+      hudNameEl: document.getElementById("hudP3Name"), hudEmojiEl: document.getElementById("hudP3Emoji"),
+      distEl: document.getElementById("distP3"),
+      resultEl: document.getElementById("resultP3"), resultValEl: document.getElementById("resultP3Val"),
+      resultNameEl: document.getElementById("resultP3Name"), resultEmojiEl: document.getElementById("resultP3Emoji")
+    }
+  };
+  const diffLabelEl = document.getElementById("diffLabel");
+  const timerLabelEl = document.getElementById("timerLabel");
+  const spectateBannerEl = document.getElementById("spectateBanner");
+  const trackWrapEl = document.getElementById("trackWrap");
+
+  // lane width in px, cached for converting fixed-px obstacle hitboxes to the
+  // engine's percent-based position system; refreshed on resize/orientation change
+  let laneWidthPx = trackWrapEl.offsetWidth || 343;
+  window.addEventListener("resize", ()=>{ laneWidthPx = trackWrapEl.offsetWidth || laneWidthPx; });
+
+  let entities = {}; // role -> {dinoEl, heartsEl, diedTagEl}
+  let obstacleEls = {}; // "<obstacleId>_<role>" -> element (satu obstacle dirender di semua lane aktif)
+
+  function makeHearts(){
+    const h = document.createElement("div");
+    h.className = "hearts";
+    return h;
+  }
+
+  function setupLanes(){
+    // bersihin & sembunyiin semua slot dulu, baru bangun ulang yang aktif buat ronde ini
+    ROLE_LIST.forEach(r=>{
+      const m = ROLE_META[r];
+      m.laneEl.querySelectorAll(".dino, .obstacle, .died-tag, .hearts").forEach(n=>n.remove());
+      m.hudEl.classList.remove("me");
+      const isActive = roles.includes(r);
+      m.laneEl.style.display = isActive ? "" : "none";
+      m.hudEl.style.display = isActive ? "" : "none";
+      m.resultEl.style.display = isActive ? "" : "none";
+    });
+
+    entities = {};
+    roles.forEach(r=>{
+      const m = ROLE_META[r];
+      const label = isSolo ? "KAMU" : "PLAYER " + r.slice(-1);
+      const nameLabel = isSolo ? "Kamu" : DEFAULT_NAME[r];
+      m.laneEl.querySelector(".lane-tag").textContent = label;
+
+      const tag = document.createElement("div");
+      tag.className = "died-tag";
+      tag.textContent = "[DIED]";
+      m.laneEl.appendChild(tag);
+
+      const dinoEl = document.createElement("div");
+      dinoEl.className = "dino flip"; // flip = ngadep kanan (arah lari), permanen
+      dinoEl.textContent = dinos[r];
+      dinoEl.style.left = (DINO_MIN_LEFT+6) + "%";
+      m.laneEl.appendChild(dinoEl);
+
+      const heartsEl = makeHearts();
+      m.laneEl.appendChild(heartsEl);
+
+      entities[r] = { dinoEl, heartsEl, diedTagEl: tag };
+
+      m.hudNameEl.textContent = nameLabel;
+      m.hudEmojiEl.textContent = dinos[r];
+      m.resultNameEl.textContent = nameLabel;
+      m.resultEmojiEl.textContent = dinos[r];
+    });
+
+    ROLE_META[role].hudEl.classList.add("me");
+    trackWrapEl.classList.remove("lanes-1", "lanes-2", "lanes-3");
+    trackWrapEl.classList.add("lanes-" + playerCount);
+    obstacleEls = {};
+  }
+
+  function heartsHtml(lives){
+    let s = "";
+    for(let i=0;i<LIVES_MAX;i++) s += (i < lives) ? "❤️" : "🤍";
+    return s;
+  }
+
+  function renderHearts(el, leftPct, jumpY, lives, dead){
+    if(!el) return;
+    if(dead){ el.style.display = "none"; return; }
+    el.style.display = "block";
+    const html = heartsHtml(lives);
+    if(el._html !== html){ el.innerHTML = html; el._html = html; } // update DOM hanya saat berubah
+  }
+
+  async function startGame(){
+    running = true;
+    finished = false;
+    localObstacles = [];
+    nextScheduleIdx = 0;
+    lastDistWriteAt = 0;
+
+    myState = freshPlayerState();
+    myState.connected = true;
+    remoteStates = {};
+    otherRoles.forEach(r=>{
+      remoteStates[r] = freshPlayerState();
+      remoteStates[r].connected = true;
+    });
+
+    let seed = Math.floor(Math.random()*1e9); // solo: seed lokal acak tiap ronde
+    if(!isSolo){
+      try {
+        const fetches = [gameRef.child("seed").get(), ...roles.map(r=> gameRef.child(r+"/dino").get())];
+        const snaps = await Promise.all(fetches);
+        seed = snaps[0].val() || 1;
+        roles.forEach((r, i)=>{ dinos[r] = snaps[i+1].val() || dinos[r]; });
+      } catch(err){ console.error("gagal ambil seed/dino, pakai default", err); }
+    }
+    obstacleSchedule = buildObstacleSchedule(seed, SCHEDULE_DURATION_MS);
+
+    setupLanes();
+    showScreen("game");
+    spectateBannerEl.style.display = "none";
+
+    if(!isSolo) attachRealtimeListeners();
+    bindControls();
+
+    startTime = performance.now();
+    raf = requestAnimationFrame(loop);
+  }
+
+  function attachRealtimeListeners(){
+    if(listenersAttached) return; // startGame jalan lagi tiap ronde rematch — listener cukup sekali per sesi
+    listenersAttached = true;
+    myRef = gameRef.child(role);
+
+    otherRoles.forEach(r=>{
+      const ref = gameRef.child(r);
+      const handler = ref.on("value", (snap)=>{
+        const v = snap.val();
+        if(!v) return;
+        const st = remoteStates[r];
+        st.leftPct = (typeof v.leftPct === "number") ? v.leftPct : st.leftPct;
+        // jumpStart dari device lawan pakai jam internal dia (performance.now() beda basis antar device),
+        // jadi animasi lompat lawan dihitung ulang pakai jam lokal saat flag jumping menyala
+        if(!!v.jumping && !st.jumping){
+          st.jumpStart = performance.now();
+        }
+        st.jumping = !!v.jumping;
+        st.dead = !!v.dead;
+        st.distance = v.distance || 0;
+        st.connected = v.connected !== false;
+        const newLives = (typeof v.lives === "number") ? v.lives : st.lives;
+        if(newLives < st.lives){ st.blinkUntil = performance.now() + INVINCIBLE_MS; }
+        st.lives = newLives;
+        ROLE_META[r].distEl.textContent = Math.round(st.distance);
+      });
+      unsubscribers.push(()=> ref.off("value", handler));
+    });
+
+    const statusHandler = gameRef.child("status").on("value", (snap)=>{
+      if(snap.val() === "finished" && !finished){
+        finalizeIfAllDone(true);
+      }
+    });
+    unsubscribers.push(()=> gameRef.child("status").off("value", statusHandler));
+
+    // rematch: satu pemain klik "Main Lagi" → langsung ronde baru di semua device (host yang reset)
+    const rematchHandler = gameRef.child("rematch").on("value", (snap)=>{
+      const v = snap.val() || {};
+      const anyOppWants = otherRoles.some(r=> v[r]);
+      const iWant = !!v[role];
+      if(finished && anyOppWants && !iWant){
+        toast("Lawan mulai ronde baru! 🏁");
+      }
+      if(role === "player1" && roles.some(r=> v[r])){
+        const update = {
+          seed: Math.floor(Math.random()*1e9),
+          round: currentRound + 1,
+          status: "playing"
+        };
+        roles.forEach(r=>{
+          update[`rematch/${r}`] = false;
+          update[`${r}/dead`] = false;
+          update[`${r}/distance`] = 0;
+          update[`${r}/jumping`] = false;
+          update[`${r}/lives`] = LIVES_MAX;
+        });
+        gameRef.update(update).catch(()=>{});
+      }
+    });
+    unsubscribers.push(()=> gameRef.child("rematch").off("value", rematchHandler));
+
+    // ronde naik = mulai ulang di semua device (dipakai buat rematch)
+    const roundHandler = gameRef.child("round").on("value", (snap)=>{
+      const r = snap.val();
+      if(typeof r === "number" && r > currentRound){
+        currentRound = r;
+        beginCountdownAndStart();
+      }
+    });
+    unsubscribers.push(()=> gameRef.child("round").off("value", roundHandler));
+  }
+
+  // ---------------- controls ----------------
+  function bindControls(){
+    if(controlsBound) return; // sekali per sesi — rematch jangan sampai dobel handler
+    controlsBound = true;
+    const left = document.getElementById("btnLeft");
+    const right = document.getElementById("btnRight");
+    const jump = document.getElementById("btnJump");
+
+    const onLeft = (e)=>{ e.preventDefault(); moveLeft(); };
+    const onRight = (e)=>{ e.preventDefault(); moveRight(); };
+    const onJump = (e)=>{ e.preventDefault(); doJump(); };
+
+    left.addEventListener("pointerdown", onLeft);
+    right.addEventListener("pointerdown", onRight);
+    jump.addEventListener("pointerdown", onJump);
+
+    left._h = onLeft; right._h = onRight; jump._h = onJump;
+
+    const keyHandler = (e)=>{
+      if(!running) return;
+      if(e.key === "ArrowLeft" || e.key === "a") moveLeft();
+      else if(e.key === "ArrowRight" || e.key === "d") moveRight();
+      else if(e.key === " " || e.key === "ArrowUp" || e.key === "w"){ e.preventDefault(); doJump(); }
+    };
+    document.addEventListener("keydown", keyHandler);
+    unsubscribers.push(()=> document.removeEventListener("keydown", keyHandler));
+    unsubscribers.push(()=>{
+      left.removeEventListener("pointerdown", onLeft);
+      right.removeEventListener("pointerdown", onRight);
+      jump.removeEventListener("pointerdown", onJump);
+    });
+  }
+
+  function moveLeft(){
+    if(!running || myState.dead) return;
+    myState.leftPct = Math.max(DINO_MIN_LEFT, myState.leftPct - MOVE_STEP);
+  }
+  function moveRight(){
+    if(!running || myState.dead) return;
+    myState.leftPct = Math.min(DINO_MAX_LEFT, myState.leftPct + MOVE_STEP);
+  }
+  function doJump(){
+    if(!running || myState.dead || myState.jumping) return;
+    myState.jumping = true;
+    myState.jumpStart = performance.now();
+    myState.jumpStartLeft = myState.leftPct;
+  }
+
+  // ---------------- obstacle spawning ----------------
+  // Both players walk the same precomputed, seed-derived schedule locally —
+  // no Firebase round-trip and no dependency on either device staying foregrounded.
+  function maybeSpawnObstacle(now){
+    const elapsed = now - startTime;
+    while(nextScheduleIdx < obstacleSchedule.length && elapsed >= obstacleSchedule[nextScheduleIdx].time){
+      const item = obstacleSchedule[nextScheduleIdx];
+      const meta = OBSTACLE_TYPES.find(t=>t.type === item.type) || OBSTACLE_TYPES[0];
+      localObstacles.push({
+        id: "o" + nextScheduleIdx,
+        type: meta.type, emoji: meta.emoji, w: meta.w, flying: !!meta.flying,
+        spawnAt: item.time
+      });
+      nextScheduleIdx++;
+    }
+  }
+
+  function cleanupOldObstacles(now){
+    const elapsed = now - startTime;
+    const speed = currentSpeedPctPerMs(elapsed);
+    localObstacles = localObstacles.filter(o=>{
+      const age = elapsed - o.spawnAt;
+      const posPct = 100 - age * speed * 100;
+      return posPct >= -15;
+    });
+  }
+
+  function currentSpeedPctPerMs(elapsedMs){
+    const rampT = Math.min(1, elapsedMs / SPEED_RAMP_MS);
+    return (BASE_SPEED + (MAX_SPEED - BASE_SPEED) * rampT) / 100; // convert %/ms already in % units -> keep as fraction*100 handled below
+  }
+
+  // ---------------- physics / render loop ----------------
+  function getJumpOffset(state, now){
+    if(!state.jumping) return 0;
+    const t = now - state.jumpStart;
+    if(t >= JUMP_DURATION){
+      state.jumping = false;
+      return 0;
+    }
+    const p = t / JUMP_DURATION; // 0..1
+    // parabolic arc
+    const arc = 4 * p * (1 - p);
+    return arc * JUMP_HEIGHT;
+  }
+
+  function loop(now){
+    if(!running) return;
+    const elapsed = now - startTime;
+    const myEnt = entities[role];
+
+    // jump physics
+    getJumpOffset(myState, now); // updates myState.jumping flag as needed (side effect)
+    const myJumpY = jumpOffsetPure(myState, now);
+
+    // lompatan bawa maju: drift horizontal mengikuti progres lompatan
+    if(myState.jumping && !myState.dead){
+      const jp = Math.min(1, (now - myState.jumpStart) / JUMP_DURATION);
+      myState.leftPct = Math.min(DINO_MAX_LEFT, (myState.jumpStartLeft ?? myState.leftPct) + jp * (JUMP_FORWARD_PX / laneWidthPx) * 100);
+    }
+
+    // render dino aku
+    myEnt.dinoEl.style.left = myState.leftPct + "%";
+    myEnt.dinoEl.style.bottom = (GROUND_BOTTOM + myJumpY) + "px";
+    myEnt.dinoEl.classList.toggle("dead", !!myState.dead);
+    myEnt.dinoEl.classList.toggle("blink", now < myState.invincibleUntil && !myState.dead);
+    renderHearts(myEnt.heartsEl, myState.leftPct, myJumpY, myState.lives, myState.dead);
+    myEnt.diedTagEl.classList.toggle("show", !!myState.dead);
+
+    // render dino tiap lawan (0, 1, atau 2 tergantung mode)
+    let anyOppAlive = false;
+    otherRoles.forEach(r=>{
+      const st = remoteStates[r];
+      const ent = entities[r];
+      const jumpY = jumpOffsetPure(st, now);
+      ent.dinoEl.style.left = st.leftPct + "%";
+      ent.dinoEl.style.bottom = (GROUND_BOTTOM + jumpY) + "px";
+      ent.dinoEl.classList.toggle("dead", !!st.dead);
+      ent.dinoEl.classList.toggle("blink", now < st.blinkUntil && !st.dead);
+      renderHearts(ent.heartsEl, st.leftPct, jumpY, st.lives, st.dead);
+      ent.diedTagEl.classList.toggle("show", !!st.dead);
+      if(!st.dead) anyOppAlive = true;
+    });
+
+    // spawn + cleanup obstacle (lokal, seed-driven, identik di semua device)
+    maybeSpawnObstacle(now);
+    cleanupOldObstacles(now);
+
+    // render obstacle di semua lane aktif
+    renderObstacles(elapsed);
+
+    // distance increases while alive
+    if(!myState.dead){
+      myState.distance = elapsed / 1000 * 10; // 10 "meters" per second baseline
+      ROLE_META[role].distEl.textContent = Math.round(myState.distance);
+    }
+
+    // throttled write ke Firebase (~10/s) — solo skip total, ga ada Firebase
+    if(!isSolo && now - lastDistWriteAt > 90){
+      lastDistWriteAt = now;
+      writeMyState();
+    }
+
+    // collision detection (client authoritative for own dino)
+    if(!myState.dead){
+      checkCollision(elapsed);
+    }
+
+    // difficulty label + timer
+    updateHud(elapsed);
+
+    // banner spectator: aku mati tapi masih ada lawan yang hidup
+    spectateBannerEl.style.display = (myState.dead && anyOppAlive) ? "block" : "none";
+
+    // selesai kalau aku + SEMUA lawan udah mati (solo: otherRoles kosong -> selesai begitu aku mati)
+    if(myState.dead && otherRoles.every(r=> remoteStates[r].dead) && !finished){
+      finalizeIfAllDone(false);
+    }
+
+    if(running) raf = requestAnimationFrame(loop);
+  }
+
+  function jumpOffsetPure(state, now){
+    if(!state.jumping) return 0;
+    const t = now - state.jumpStart;
+    if(t >= JUMP_DURATION){ return 0; }
+    const p = Math.max(0, Math.min(1, t / JUMP_DURATION));
+    const arc = 4 * p * (1 - p);
+    return arc * JUMP_HEIGHT;
+  }
+
+  function renderObstacles(elapsedMs){
+    const speedFrac = currentSpeedPctPerMs(elapsedMs) * 100; // % per ms (already divided by 100 above, correct here)
+    const activeIds = new Set();
+    localObstacles.forEach(o=>{
+      const age = elapsedMs - o.spawnAt;
+      if(age < 0) return;
+      const posPct = 100 - age * speedFrac;
+      activeIds.add(o.id);
+      roles.forEach(r=>{
+        const key = o.id + "_" + r;
+        let el = obstacleEls[key];
+        if(!el){
+          el = document.createElement("div");
+          el.className = "obstacle" + (o.flying ? " bird" : "");
+          el.textContent = o.emoji;
+          ROLE_META[r].laneEl.appendChild(el);
+          obstacleEls[key] = el;
+        }
+        el.style.left = posPct + "%";
+        if(o.flying){
+          el.style.bottom = (GROUND_BOTTOM + 46) + "px";
+        }
+        if(posPct < -20 || posPct > 120){
+          el.remove();
+          delete obstacleEls[key];
+        }
+      });
+    });
+    // remove stale DOM nodes whose obstacle no longer exists
+    Object.keys(obstacleEls).forEach(key=>{
+      const id = key.replace(/_player[123]$/, "");
+      if(!activeIds.has(id)){
+        obstacleEls[key].remove();
+        delete obstacleEls[key];
+      }
+    });
+  }
+
+  function checkCollision(elapsedMs){
+    if(performance.now() < myState.invincibleUntil) return; // masih kebal setelah nabrak
+    const speedFrac = currentSpeedPctPerMs(elapsedMs) * 100;
+    const jumpY = jumpOffsetPure(myState, performance.now());
+    for(const o of localObstacles){
+      const age = elapsedMs - o.spawnAt;
+      if(age < 0) continue;
+      const posPct = 100 - age * speedFrac;
+      // horizontal overlap check (dino occupies ~ myState.leftPct..+6%)
+      const dinoLeft = myState.leftPct;
+      const dinoRight = myState.leftPct + 7;
+      const obsLeft = posPct;
+      const obsRight = posPct + (o.w / laneWidthPx) * 100;
+      const overlapX = obsRight > dinoLeft && obsLeft < dinoRight;
+      if(!overlapX) continue;
+      // vertical: burung terbang di atas kepala — aman selama di darat, kena kalau lompat ke arahnya;
+      // obstacle darat kena kecuali lagi melayang cukup tinggi
+      if(o.flying){
+        if(jumpY > 20) { hitMe(); return; }
+      } else {
+        if(jumpY < 22) { hitMe(); return; }
+      }
+    }
+  }
+
+  function hitMe(){
+    if(myState.dead) return;
+    myState.lives = Math.max(0, myState.lives - 1);
+    myState.invincibleUntil = performance.now() + INVINCIBLE_MS; // kebal + kedip
+    if(myState.lives <= 0){
+      killMe();
+    } else {
+      writeMyState(true); // sync sisa nyawa ke lawan
+    }
+  }
+
+  function killMe(){
+    if(myState.dead) return;
+    myState.dead = true;
+    writeMyState(true);
+    if(isSolo){
+      toast("Kamu game over!");
+    } else {
+      const allOppDead = otherRoles.every(r=> remoteStates[r].dead);
+      toast(allOppDead ? "Kamu game over!" : "Kamu game over! Nunggu lawan selesai...");
+    }
+  }
+
+  function writeMyState(force){
+    if(!myRef) return;
+    myRef.update({
+      leftPct: myState.leftPct,
+      jumping: myState.jumping,
+      dead: myState.dead,
+      distance: myState.distance,
+      lives: myState.lives,
+      connected: true
+    }).catch(()=>{});
+  }
+
+  function updateHud(elapsedMs){
+    timerLabelEl.textContent = (elapsedMs/1000).toFixed(1) + "s";
+    const rampT = Math.min(1, elapsedMs / SPAWN_RAMP_MS);
+    let label = "EASY";
+    if(rampT > 0.66) label = "HARD";
+    else if(rampT > 0.3) label = "MEDIUM";
+    diffLabelEl.textContent = label;
+  }
+
+  function finalizeIfAllDone(fromRemote){
+    if(finished) return;
+    finished = true;
+    running = false;
+    cancelAnimationFrame(raf);
+
+    if(isSolo){
+      showGameOver({ [role]: myState.distance });
+      return;
+    }
+
+    if(role === "player1" && !fromRemote){
+      gameRef.child("status").set("finished").catch(()=>{});
+    }
+
+    // ambil jarak final tiap lawan sekali lagi sebelum nampilin hasil
+    Promise.all(otherRoles.map(r=> gameRef.child(r).child("distance").get()))
+      .then(snaps=>{
+        const distances = { [role]: myState.distance };
+        otherRoles.forEach((r, i)=>{
+          distances[r] = snaps[i].val() ?? remoteStates[r].distance;
+        });
+        showGameOver(distances);
+      })
+      .catch(()=>{
+        const distances = { [role]: myState.distance };
+        otherRoles.forEach(r=> distances[r] = remoteStates[r].distance);
+        showGameOver(distances);
+      });
+  }
+
+  function showGameOver(distances){
+    roles.forEach(r=>{
+      ROLE_META[r].resultValEl.textContent = Math.round(distances[r]) + " m";
+      ROLE_META[r].resultEl.classList.remove("winner");
+      ROLE_META[r].resultEl.querySelector(".go-badge")?.remove();
+    });
+
+    const overTitle = document.getElementById("overTitle");
+    const overSub = document.getElementById("overSubtitle");
+    const trophy = document.getElementById("overTrophy");
+    const bestLine = document.getElementById("bestLine");
+    const myDist = distances[role];
+    const isNewBest = setBestScoreIfHigher(myDist);
+
+    if(isSolo){
+      overTitle.textContent = "Selesai! 🏁";
+      overSub.textContent = "Jarak akhir kamu:";
+      trophy.textContent = isNewBest ? "🏆" : "🏁";
+      bestLine.textContent = isNewBest
+        ? `🎉 Rekor pribadi baru: ${Math.round(myDist)} m!`
+        : `Best distance kamu: ${getBestScore()} m`;
+      showScreen("over");
+      return;
+    }
+
+    let maxDist = -1;
+    roles.forEach(r=>{ if(distances[r] > maxDist) maxDist = distances[r]; });
+    const winners = roles.filter(r=> distances[r] === maxDist);
+    const isTie = winners.length > 1;
+    const iWon = !isTie && winners[0] === role;
+
+    if(isTie){
+      overTitle.textContent = "Seri!";
+      overSub.textContent = "Jarak kalian sama persis.";
+      trophy.textContent = "🤝";
+    } else {
+      const winnerRole = winners[0];
+      const winnerName = `${DEFAULT_NAME[winnerRole]} ${dinos[winnerRole]}`;
+      overTitle.textContent = iWon ? "Kamu Menang! 🎉" : `${winnerName} Menang!`;
+      overSub.textContent = iWon ? "Jarak terjauh, kamu juara balapan ini." : "Coba lagi buat balas dendam!";
+      trophy.textContent = iWon ? "🏆" : "🏁";
+      const wEl = ROLE_META[winnerRole].resultEl;
+      wEl.classList.add("winner");
+      const badge = document.createElement("div");
+      badge.className = "go-badge";
+      badge.textContent = "WINNER";
+      wEl.appendChild(badge);
+    }
+
+    bestLine.textContent = isNewBest
+      ? `🎉 Rekor pribadi baru: ${Math.round(myDist)} m!`
+      : `Best distance kamu: ${getBestScore()} m`;
+
+    showScreen("over");
+  }
+
+  // ---------------- cleanup ----------------
+  function cleanupGame(removeFromDb){
+    running = false;
+    if(raf) cancelAnimationFrame(raf);
+    unsubscribers.forEach(fn=>{ try{ fn(); }catch(e){} });
+    unsubscribers = [];
+    if(myRef){
+      myRef.update({ connected: false }).catch(()=>{});
+    }
+    if(gameRef && removeFromDb && role === "player1" && !finished){
+      gameRef.remove().catch(()=>{});
+    }
+    ROLE_LIST.forEach(r=> ROLE_META[r].hudEl.classList.remove("me"));
+    document.getElementById("joinStatusMsg").textContent = "";
+    document.getElementById("joinCodeInput").value = "";
+    const playAgainBtn = document.getElementById("playAgainBtn");
+    playAgainBtn.disabled = false;
+    playAgainBtn.textContent = "Main Lagi";
+    gameCode = null; role = null; gameRef = null; myRef = null;
+    isSolo = false; playerCount = 2; roles = ["player1","player2"]; otherRoles = ["player2"];
+    remoteStates = {}; entities = {};
+    listenersAttached = false; controlsBound = false; currentRound = 0; countingDown = false; selecting = false;
+  }
+
+  window.addEventListener("beforeunload", ()=>{
+    if(myRef) myRef.update({ connected: false });
+  });
+
+})();
+</script>
+</body>
+</html>

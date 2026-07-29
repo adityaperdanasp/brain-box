@@ -58,6 +58,12 @@
     $("bb-auth-pin").addEventListener("keydown", (e) => {
       if (e.key === "Enter") $("bb-auth-submit").click();
     });
+
+    // The walking dino doubles as the entry point into DinoRace — a
+    // fully separate self-contained app (own Firebase project), so this
+    // is a plain navigation, not routed through this app's screen system.
+    const dinoBtn = $("bb-landing-dino-btn");
+    if (dinoBtn) dinoBtn.addEventListener("click", () => { window.location.href = "dinorace/index.html"; });
   }
 
   /* ---- Menu screen — same avatar-color-hash + bobbing-greeting pattern
