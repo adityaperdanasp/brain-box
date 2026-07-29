@@ -76,7 +76,7 @@
       hintEl.innerHTML = `
         <div class="bb-ai-row">
           <img class="bb-ai-avatar" src="icons/ai-avatar.png" alt="" />
-          <span class="bb-ai-thinking-label">Bo is thinking ✨</span>
+          <span class="bb-ai-thinking-label">Bo is thinking</span>
           <span class="bb-ai-thinking-dots"><span></span><span></span><span></span></span>
         </div>
       `;

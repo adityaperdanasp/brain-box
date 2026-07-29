@@ -458,8 +458,8 @@ button.sc-game-card:active { transform: scale(0.98); }
   50%      { transform: translateY(-3px) rotate(4deg); }
 }
 .bb-ai-thinking-label {
-  font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 0.72rem;
-  letter-spacing: 0.5px; text-transform: uppercase; color: #8a6d3a;
+  font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 0.85rem;
+  color: #8a6d3a;
 }
 .bb-ai-thinking-dots { display: inline-flex; gap: 3px; }
 .bb-ai-thinking-dots span {
